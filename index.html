@@ -379,7 +379,7 @@ const rules = [
 }
 },
 {
-"sub": "§2.15",
+"sub": "§2.16",
 "type": "severe",
 "t": {
 "ru": "Сельскохозяйственный транспорт в городе.",
@@ -393,7 +393,7 @@ const rules = [
 }
 },
 {
-"sub": "§2.16",
+"sub": "§2.17",
 "type": "severe",
 "t": {
 "ru": "Игнорирование требования остановки во время погони.",
@@ -448,17 +448,18 @@ const rules = [
 "en": "Deport 1 day"
 }
 },
+{
 "sub": "§2.21",
 "type": "severe",
 "t": {
 "ru": "Игнорирования просьбы остановится от администратора (Админ кар).",
 "uk": "Ігнорування прохання зупинитися від адміністрації (Адмін кар).",
-"en": "Riding a moped while wanted."
+"en": "Ignoring a stop request from an administrator (Admin car)."
 },
 "p": {
 "ru": "Депорт 1 - 3 сутки",
 "uk": "Депорт 1 - 3 доба",
-"en": "Deport 1 day"
+"en": "Deport 1-3 days"
 }
 }
 ]
@@ -502,7 +503,7 @@ const rules = [
 }
 },
 {
-"sub": "3.3",
+"sub": "§3.3",
 "type": "severe",
 "t": {
 "ru": "Провоцировать конфликты, оскорблять, начинать драки в ЗЗ.",
@@ -516,7 +517,7 @@ const rules = [
 }
 },
 {
-"sub": "3.4",
+"sub": "§3.4",
 "type": "fine",
 "t": {
 "ru": "Доставать/демонстрировать/использовать оружие в ЗЗ.",
@@ -530,7 +531,7 @@ const rules = [
 }
 },
 {
-"sub": "3.5",
+"sub": "§3.5",
 "type": "severe",
 "t": {
 "ru": "Находиться в маске / скрывать лицо в ЗЗ.",
@@ -583,7 +584,7 @@ const rules = [
 "en": "8000€ fine"
 }
 },
-
+{
 "sub": "§4.3",
 "type": "fine",
 "t": {
@@ -696,28 +697,28 @@ const rules = [
 "sub": "§5.6",
 "type": "fine",
 "t": {
-"ru": "Нападени е на гос. сотрудника.",
+"ru": "Нападение на гос. сотрудника.",
 "uk": "Напад на гос працівника.",
-"en": "Handing a weapon to third parties."
+"en": "Attacking a government employee."
 },
 "p": {
 "ru": "КПЗ",
 "uk": "КПЗ",
-"en": "5000€ fine"
+"en": "Detention (КПЗ)"
 }
 },
 {
 "sub": "§5.7",
 "type": "fine",
 "t": {
-"ru": "Использование огнестрельно оружия в целях сопротивления против задержания.",
-"uk": "Використання вогне пальної зброї у цілях опіру затримання.",
-"en": "Handing a weapon to third parties."
+"ru": "Использование огнестрельного оружия в целях сопротивления против задержания.",
+"uk": "Використання вогнепальної зброї у цілях опору затримання.",
+"en": "Using a firearm to resist arrest."
 },
 "p": {
 "ru": "КПЗ",
 "uk": "КПЗ",
-"en": "5000€ fine"
+"en": "Detention (КПЗ)"
 }
 }
 ]
@@ -1170,12 +1171,12 @@ const rules = [
 "t": {
 "ru": "Ложный вызов гос. структур.",
 "uk": "Хибний виклик гос структур.",
-"en": "Using force during an arrest without necessity."
+"en": "False call to government structures."
 },
 "p": {
 "ru": "Штраф 4500€",
 "uk": "Штраф 4500€",
-"en": "3500€ fine"
+"en": "4500€ fine"
 }
 }
 ]
@@ -1372,9 +1373,9 @@ const rules = [
 "sub": "§13.3",
 "type": "severe",
 "t": {
-"ru": "Будь какая прапанда что хоть как-то касается политики стран.",
+"ru": "Будь какая пропаганда что хоть как-то касается политики стран.",
 "uk": "Будь яка пропаганда що хоч якось торкаєтся політики країн.",
-"en": "Russian propaganda."
+"en": "Any propaganda related to the politics of countries."
 },
 "p": {
 "ru": "Депорт 15 - 25",
@@ -1383,17 +1384,17 @@ const rules = [
 }
 },
 {
-"sub": "§13.3",
+"sub": "§13.4",
 "type": "severe",
 "t": {
 "ru": "Патриотическая музыка в голосовом чате.",
 "uk": "Патріотична музика в голосовому чаті.",
-"en": "Russian music in voice chat."
+"en": "Patriotic music in voice chat."
 },
 "p": {
 "ru": "Депорт до 2 - 5 суток",
 "uk": "Депорт до 2 - 5 діб",
-"en": "Deport up to 2 days"
+"en": "Deport up to 2-5 days"
 }
 },
 {
@@ -1421,7 +1422,7 @@ const rules = [
 "p": {
 "ru": "На рассмотрение администрации проекта",
 "uk": "На думку адміністрації проекта",
-"en": "Deport up to 5"
+"en": "At project administration's discretion"
 }
 }
 ]
@@ -1517,12 +1518,12 @@ const rules = [
 }
 },
 {
-"sub": "15.5",
+"sub": "§15.5",
 "type": "fine",
 "t": {
 "ru": "Перекрытие дорог транспортом во время митинга.",
 "uk": "Перекриття доріг транспортом під час мітінгую.",
-"en": "Using pyrotechnics at a rally."
+"en": "Blocking roads with vehicles during a rally."
 },
 "p": {
 "ru": "Штраф 8000€",
@@ -1743,28 +1744,28 @@ const rules = [
 "sub": "§20.3",
 "type": "severe",
 "t": {
-"ru": "Выход с сервера после суда",
-"uk": "Вихід з серверу після суду",
-"en": "While cuffed you can't enter your faction's territory."
+"ru": "Выход с сервера после суда.",
+"uk": "Вихід з серверу після суду.",
+"en": "Leaving the server after court."
 },
 "p": {
 "ru": "депорт 2 суток",
 "uk": "депорт 2 доби",
-"en": "deport 3 days"
+"en": "deport 2 days"
 }
 },
 {
 "sub": "§20.4",
 "type": "severe",
 "t": {
-"ru": "Выход с сервера во время отбывания срока в Demorgan",
-"uk": "Вихід з серверу підчас відбування сроку у Demorgan",
-"en": "While cuffed you can't enter your faction's territory."
+"ru": "Выход с сервера во время отбывания срока в Demorgan.",
+"uk": "Вихід з серверу підчас відбування сроку у Demorgan.",
+"en": "Leaving the server while serving time in Demorgan."
 },
 "p": {
 "ru": "депорт 1 - 7 суток",
 "uk": "депорт 1- 7 доби",
-"en": "deport 3 days"
+"en": "deport 1-7 days"
 }
 },
 {
@@ -1773,12 +1774,12 @@ const rules = [
 "t": {
 "ru": "Помощь в NRP/RP побеге из Суда или Федеральной Тюрьмы.",
 "uk": "Допомога у NRP/RP втечі з Суду або Федеральної в'язниці.",
-"en": "While cuffed you can't enter your faction's territory."
+"en": "Assisting an NRP/RP escape from Court or Federal Prison."
 },
 "p": {
 "ru": "депорт 1 - 10 суток",
 "uk": "депорт 1- 10 доби",
-"en": "deport 3 days"
+"en": "deport 1-10 days"
 }
 }
 ]
@@ -2148,7 +2149,7 @@ const rules = [
 "sub": "§25.1",
 "type": "severe",
 "t": {
-"ru": "Гражданин не может катать/подбирать крайм (исклюбчение: при обычной езде).",
+"ru": "Гражданин не может катать/подбирать крайм (исключение: при обычной езде).",
 "uk": "Громадянин не може катати/підібрати крайм.(виключення: при звичайній їзді)",
 "en": "A citizen can't drive/pick up criminals."
 },
@@ -2258,8 +2259,8 @@ const rules = [
 "type": "severe",
 "t": {
 "ru": "Переговорщик должен убедится что похищенный в полном порядке и не получал каких либо физических - психических травм.",
-"uk": "Перемовник повинен переконатись що викраденний у повному порядку та не отримував якихось фізичних - психічних травм. ",
-"en": "Excessive demands were made."
+"uk": "Перемовник повинен переконатись що викраденний у повному порядку та не отримував якихось фізичних - психічних травм.",
+"en": "The negotiator must ensure the victim is unharmed and has not received any physical or psychological trauma."
 },
 "p": {
 "ru": "Штурм территории",
@@ -2424,8 +2425,6 @@ function openModal(rule){
     return;
   }
 
-  // надёжный каскад: каждый «пакет» появившихся подпунктов
-  // сортируется по позиции и проявляется с нарастающей задержкой
   itemObserver=new IntersectionObserver((entries,obs)=>{
     const vis=entries.filter(e=>e.isIntersecting)
                      .sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
@@ -2436,7 +2435,6 @@ function openModal(rule){
     });
   },{root:scroller, threshold:0.06});
 
-  // запускаем наблюдение на следующем кадре, когда модалка уже отрисована
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     items.forEach(it=>itemObserver.observe(it));
   }));
@@ -2456,14 +2454,13 @@ document.getElementById('filters').addEventListener('click',e=>{
 });
 addEventListener('resize',()=>positionPill(true));
 
-/* ===== частицы, летящие вверх из нижнего GLOW ===== */
 (function(){
   const c=document.getElementById('gp'); if(!c)return;
   let s='';
   for(let i=0;i<34;i++){
-    const left=(28+Math.random()*44).toFixed(1);      // около центра-низа
+    const left=(28+Math.random()*44).toFixed(1);
     const dx=(Math.random()*160-80).toFixed(0);
-    const rise=-(62+Math.random()*46).toFixed(0);      // vh вверх
+    const rise=-(62+Math.random()*46).toFixed(0);
     const d=(5.5+Math.random()*5).toFixed(2);
     const delay=(Math.random()*7).toFixed(2);
     const sz=(3+Math.random()*5).toFixed(1);
@@ -2472,7 +2469,6 @@ addEventListener('resize',()=>positionPill(true));
   c.innerHTML=s;
 })();
 
-/* ===== стилизованный слайдер прокрутки модалки ===== */
 (function(){
   const slider=document.getElementById('mSlider');
   const thumb=document.getElementById('mThumb');
@@ -2522,7 +2518,6 @@ addEventListener('resize',()=>positionPill(true));
   });
 })();
 
-/* ===== оптимизированный фон: спрайт вместо shadowBlur ===== */
 const canvas=document.getElementById('fx'),ctx=canvas.getContext('2d');let parts=[];
 const sprite=document.createElement('canvas');sprite.width=sprite.height=48;
 (function(){const c=sprite.getContext('2d');const g=c.createRadialGradient(24,24,0,24,24,24);
