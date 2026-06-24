@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Russia RP — Правила сервера</title>
+<link rel="icon" href="https://i.ibb.co/whLgkg6s/Untitled219-20260623213911.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="fx"></canvas>
+
+<div id="gate" class="anim">
+  <div class="gate-glow-bottom"></div>
+  <div class="gate-rise" id="gp"></div>
+
+  <div class="gate-core">
+    <div class="core-ring"></div>
+    <div class="core-ring core-ring2"></div>
+    <img class="gate-logo" src="https://i.ibb.co/xqt9LV1t/Untitled220-20260623214449.png" alt="">
+  </div>
+
+  <div class="gate-prompt">Выберите язык · Оберіть мову</div>
+  <div class="gate-grid">
+    <button class="lang-btn ru" onclick="pickLang('ru')">
+      <span class="lb-flag"></span>
+      <span class="lb-text"><span class="lb-name">Русский</span><span class="lb-sub">Russian</span></span>
+      <span class="lb-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+    </button>
+    <button class="lang-btn uk" onclick="pickLang('uk')">
+      <span class="lb-flag"></span>
+      <span class="lb-text"><span class="lb-name">Українська</span><span class="lb-sub">Ukrainian</span></span>
+      <span class="lb-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+    </button>
+  </div>
+</div>
+
+<header class="topbar">
+  <img class="tb-logo" src="https://i.ibb.co/xqt9LV1t/Untitled220-20260623214449.png" alt="">
+  <div class="tb-spacer"></div>
+  <div class="lang-switch flag-ru" id="langSwitch" onclick="reopenGate()" title=""><span id="curLang">RU</span></div>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="search" type="text" placeholder=""></div>
+    <div class="filters" id="filters">
+      <span class="chip-pill" id="pill"></span>
+      <div class="chip active" data-f="all"></div>
+      <div class="chip" data-f="fine"></div>
+      <div class="chip" data-f="severe"></div>
+    </div>
+  </div>
+</div>
+
+<div class="rules-grid" id="grid"></div>
+<div class="empty" id="empty"></div>
+
+<div class="modal" id="modal">
+  <div class="modal-frame">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">×</span>
+      <div class="modal-slider" id="mSlider"><div class="ms-track"></div><div class="ms-thumb" id="mThumb"></div></div>
+      <div class="modal-scroll">
+        <h2 id="modalTitle"></h2>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 <b>RUSSIA RP</b> · ALL RIGHTS RESERVED</footer>
+
+<script>
+const i18n = {
+  ru:{code:"RU",search:"Поиск по правилам…",all:"Все",fine:"Штрафы",severe:"Тяжкие",penalty:"НАКАЗАНИЕ",empty:"Ничего не найдено",switch:"Сменить язык"},
+  uk:{code:"UA",search:"Пошук по правилах…",all:"Всі",fine:"Штрафи",severe:"Тяжкі",penalty:"ПОКАРАННЯ",empty:"Нічого не знайдено",switch:"Змінити мову"}
+};
+const rules = [
+{
+"num": 1,
+"icon": "fa-handshake-angle",
+"tt": {
+"ru": "Уважение, антибуллинг, личное пространство",
+"uk": "Повага, антибулінг, особистий простір",
+"en": "Respect, anti-bullying, personal space"
+},
+"items": [
+{
+"sub": "§1",
+"type": "fine",
+"t": {
+"ru": "Оскорбления, буллинг, нарушение личного пространства. Уважайте других персонажей и не используйте оскорбления как способ отыгровки RP.",
+"uk": "Образи, булінг, порушення особистого простору. Поважайте інших персонажів та не використовуйте образи як спосіб відігравання RP.",
+"en": "Insults, bullying, violation of personal space. Respect other characters and don't use insults as a way of roleplaying."
+},
+"p": {
+"ru": "Предупреждение или штраф 5000€",
+"uk": "Попередження або штраф 5000€",
+"en": "Warning or 5000€ fine"
+}
+},
+{
+"sub": "§1.2",
+"type": "fine",
+"t": {
+"ru": "Оскорбление сотрудника при исполнении служебных обязанностей.",
+"uk": "Образи працівника при виконанні службових обов'язків.",
+"en": "Insulting an on-duty official."
+},
+"p": {
+"ru": "Штраф 6000€",
+"uk": "Штраф 6000€",
+"en": "6000€ fine"
+}
+},
+{
+"sub": "§1.3",
+"type": "severe",
+"t": {
+"ru": "Оскорбление родственников.",
+"uk": "Образи родичів.",
+"en": "Insulting relatives."
+},
+"p": {
+"ru": "3 суток",
+"uk": "3 доби",
+"en": "3 days"
+}
+},
+{
+"sub": "§1.4",
+"type": "fine",
+"t": {
+"ru": "Упоминание родственников, а также любые высказывания в сторону родственников.",
+"uk": "Згадування родичів а також якісь висловлювання у сторону родичів.",
+"en": "Mentioning relatives or any remarks directed at relatives."
+},
+"p": {
+"ru": "Штраф 8000€",
+"uk": "Штраф 8000€",
+"en": "8000€ fine"
+}
+},
+{
+"sub": "§1.5",
+"type": "fine",
+"t": {
+"ru": "Угрозы жизни или здоровью в реальной жизни.",
+"uk": "Погрози життю або здоров'ю у реальному житті.",
+"en": "Threats to real-life health or safety."
+},
+"p": {
+"ru": "Штраф 6500€",
+"uk": "Штраф 6500€",
+"en": "6500€ fine"
+}
+}
+]
+},
+{
+"num": 2,
+"icon": "fa-car",
+"tt": {
+"ru": "ПДД (Правила дорожного движения)",
+"uk": "ПДР (Правила дорожнього руху)",
+"en": "Traffic rules"
+},
+"items": [
+{
+"sub": "§2.1",
+"type": "fine",
+"t": {
+"ru": "Неправильная парковка (не на парковках).",
+"uk": "Неправильне паркування (не на паркінгах).",
+"en": "Improper parking (not in parking areas)."
+},
+"p": {
+"ru": "Штраф 4000€",
+"uk": "Штраф 4000€",
+"en": "4000€ fine"
+}
+},
+{
+"sub": "§2.2",
+"type": "fine",
+"t": {
+"ru": "Разворот в запрещённых местах (мосты, туннели и т.п.).",
+"uk": "Розворот у заборонених місцях (мости, тунелі тощо).",
+"en": "U-turns in prohibited places (bridges, tunnels, etc.)."
+},
+"p": {
+"ru": "Штраф 3000€",
+"uk": "Штраф 3000€",
+"en": "3000€ fine"
+}
+},
+{
+"sub": "§2.3",
+"type": "fine",
+"t": {
+"ru": "Езда по встречной полосе (кроме разрешённых случаев).",
+"uk": "Їзда по зустрічній смузі (крім дозволених випадків).",
+"en": "Driving in the oncoming lane (except where allowed)."
+},
+"p": {
+"ru": "Штраф 4000€",
+"uk": "Штраф 4000€",
+"en": "4000€ fine"
+}
+},
+{
+"sub": "§2.4",
+"type": "fine",
+"t": {
+"ru": "Невключённые фары в тёмное время / плохую видимость / за городом.",
+"uk": "Неввімкнені фари в темний час / погану видимість / поза містом.",
+"en": "Headlights off at night / in poor visibility / outside the city."
+},
+"p": {
+"ru": "Штраф 3000€",
+"uk": "Штраф 3000€",
+"en": "3000€ fine"
+}
+},
+{
+"sub": "§2.5",
+"type": "fine",
+"t": {
+"ru": "Проезд на красный сигнал светофора.",
+"uk": "Проїзд на червоний сигнал світлофора.",
+"en": "Running a red light."
+},
+"p": {
+"ru": "Автоматический штраф 100€",
+"uk": "Автоматичний штраф 100€",
+"en": "Automatic 100€ fine"
+}
+},
+{
+"sub": "§2.6",
+"type": "fine",
+"t": {
+"ru": "Чрезмерное превышение скорости (>200 км/ч).",
+"uk": "Надмірне перевищення швидкості (>200 км/год).",
+"en": "Excessive speeding (>200 km/h)."
+},
+"p": {
+"ru": "Штраф 4000€",
+"uk": "Штраф 4000€",
+"en": "4000€ fine"
+}
+},
+{
+"sub": "§2.7",
+"type": "fine",
+"t": {
+"ru": "Объезд шлагбаума на железнодорожном переезде.",
+"uk": "Об'їзд шлагбаума на залізничному переїзді.",
+"en": "Bypassing the barrier at a railway crossing."
+},
+"p": {
+"ru": "Штраф 4000€",
+"uk": "Штраф 4000€",
+"en": "4000€ fine"
+}
+},
+{
+"sub": "§2.8",
+"type": "fine",
+"t": {
+"ru": "Неиспользование поворотников / аварийки при движении задним ходом.",
+"uk": "Невикористання поворотників / аварійки при русі заднім ходом.",
+"en": "Not using turn signals / hazards when reversing."
+},
+"p": {
+"ru": "Штраф 5000€",
+"uk": "Штраф 5000€",
+"en": "5000€ fine"
+}
+},
+{
+"sub": "§2.9",
+"type": "fine",
+"t": {
+"ru": "Движение вне дорог (поля, обочины и т.п.).",
+"uk": "Рух поза дорогами (поля, узбіччя тощо).",
+"en": "Driving off-road (fields, shoulders, etc.)."
+},
+"p": {
+"ru": "Штраф 3500€",
+"uk": "Штраф 3500€",
+"en": "3500€ fine"
+}
+},
+{
+"sub": "§2.10",
+"type": "fine",
+"t": {
+"ru": "Неосторожная езда (вихляние).",
+"uk": "Необережна їзда (вихляння).",
+"en": "Reckless driving (swerving)."
+},
+"p": {
+"ru": "Штраф 2000€",
+"uk": "Штраф 2000€",
+"en": "2000€ fine"
+}
+},
+{
+"sub": "§2.11",
+"type": "fine",
+"t": {
+"ru": "Не снижение скорости до 30 км/ч перед пешеходным переходом.",
+"uk": "Не зниження швидкості до 30 км/год перед пішохідним переходом.",
+"en": "Not slowing to 30 km/h before a crosswalk."
+},
+"p": {
+"ru": "Штраф 1500€ (водитель) / 2500€ (пешеходы)",
+"uk": "Штраф 1500€ (водій) / 2500€ (пішоходи)",
+"en": "Fine 1500€ (driver) / 2500€ (pedestrian)"
+}
+},
+{
+"sub": "§2.12",
+"type": "fine",
+"t": {
+"ru": "Нарушение очерёдности на круговом движении.",
+"uk": "Порушення черги на коловому русі.",
+"en": "Violating right-of-way at a roundabout."
+},
+"p": {
+"ru": "Штраф 2000€",
+"uk": "Штраф 2000€",
+"en": "2000€ fine"
+}
+},
+{
+"sub": "§2.13",
+"type": "fine",
+"t": {
+"ru": "Обгон в запрещённых местах (переходы, сплошная линия и т.п.).",
+"uk": "Обгін у заборонених місцях (переходи, суцільна лінія тощо).",
+"en": "Overtaking in prohibited places (crossings, solid line, etc.)."
+},
+"p": {
+"ru": "Штраф 4000€",
+"uk": "Штраф 4000€",
+"en": "4000€ fine"
+}
+},
+{
+"sub": "§2.14",
+"type": "fine",
+"t": {
+"ru": "Побег с места ДТП.",
+"uk": "Втеча з місця ДТП.",
+"en": "Fleeing the scene of an accident."
+},
+"p": {
+"ru": "Предупреждение или штраф 4000€",
+"uk": "Попередження або штраф 4000€",
+"en": "Warning or 4000€ fine"
+}
+},
+{
+"sub": "§2.15",
+"type": "fine",
+"t": {
+"ru": "Движение мопедов/скутеров не по крайней правой полосе или на автомагистрали.",
+"uk": "Рух мопедів/скутерів не по крайній правій смузі або на автомагістралі.",
+"en": "Mopeds/scooters not in the rightmost lane or on the highway."
+},
+"p": {
+"ru": "Штраф 4000€ или предупреждение",
+"uk": "Штраф 4000€ або попередження",
+"en": "4000€ fine or warning"
+}
+},
+{
+"sub": "§2.15",
+"type": "severe",
+"t": {
+"ru": "Сельскохозяйственный транспорт в городе.",
+"uk": "Сільськогосподарський транспорт у місті.",
+"en": "Agricultural vehicles in the city."
+},
+"p": {
+"ru": "Штраф 4000€ или депорт до 1 суток",
+"uk": "Штраф 4000€ або депорт до 1 доби",
+"en": "4000€ fine or deport up to 1 day"
+}
+},
+{
+"sub": "§2.16",
+"type": "severe",
+"t": {
+"ru": "Игнорирование требования остановки во время погони.",
+"uk": "Ігнорування вимоги зупинки під час погоні.",
+"en": "Ignoring a stop order during a pursuit."
+},
+"p": {
+"ru": "Штраф 3500€ или депорт до 2 суток",
+"uk": "Штраф 3500€ або депорт до 2 діб",
+"en": "3500€ fine or deport up to 2 days"
+}
+},
+{
+"sub": "§2.18",
+"type": "fine",
+"t": {
+"ru": "Использование маячков без служебной необходимости.",
+"uk": "Використання маячків без службової необхідності.",
+"en": "Using emergency lights without official need."
+},
+"p": {
+"ru": "Штраф 1700€",
+"uk": "Штраф 1700€",
+"en": "1700€ fine"
+}
+},
+{
+"sub": "§2.19",
+"type": "severe",
+"t": {
+"ru": "Заезд в Автосервис (Тюнинг) во время погони запрещён.",
+"uk": "Заїзд у Автосервіс (Тюнінг) під час погоні заборонено.",
+"en": "Entering the auto shop (tuning) during a pursuit is forbidden."
+},
+"p": {
+"ru": "Депорт 1 сутки",
+"uk": "Депорт 1 доба",
+"en": "Deport 1 day"
+}
+},
+{
+"sub": "§2.20",
+"type": "severe",
+"t": {
+"ru": "Езда на мопеде в розыске.",
+"uk": "Їзда на мопеді з розшуком.",
+"en": "Riding a moped while wanted."
+},
+"p": {
+"ru": "Депорт 1 сутки",
+"uk": "Депорт 1 доба",
+"en": "Deport 1 day"
+}
+}
+]
+},
+{
+"num": 3,
+"icon": "fa-shield-halved",
+"tt": {
+"ru": "Зелёные зоны (Green Zone)",
+"uk": "Зелені зони (Green Zone)",
+"en": "Green zones"
+},
+"image": "https://i.ibb.co/qFkJVZL1/greenzonemap.png",
+"items": [
+{
+"sub": "§3.1",
+"type": "fine",
+"t": {
+"ru": "Нахождение в розыске в зелёной зоне (без исключений).",
+"uk": "Перебування в розшуку в зеленій зоні (без винятків).",
+"en": "Being wanted while in a green zone (no exceptions)."
+},
+"p": {
+"ru": "Выход за 1 минуту",
+"uk": "Вихід за 1 хвилину",
+"en": "Leave within 1 minute"
+}
+},
+{
+"sub": "§3.2",
+"type": "fine",
+"t": {
+"ru": "Находиться с оружием в руках в зелёной зоне.",
+"uk": "Перебувати зі зброєю в руках у зеленій зоні.",
+"en": "Holding a weapon in a green zone."
+},
+"p": {
+"ru": "Штраф 4000$",
+"uk": "Штраф 4000$",
+"en": "4000$ fine"
+}
+},
+{
+"sub": "",
+"type": "severe",
+"t": {
+"ru": "Провоцировать конфликты, оскорблять, начинать драки в ЗЗ.",
+"uk": "Провокувати конфлікти, ображати, розпочинати бійки в ГЗ.",
+"en": "Provoking conflicts, insulting, starting fights in a GZ."
+},
+"p": {
+"ru": "Штраф / депорт (зависит от тяжести)",
+"uk": "Штраф / депорт (залежить від тяжкості)",
+"en": "Fine / deport (depends on severity)"
+}
+},
+{
+"sub": "",
+"type": "fine",
+"t": {
+"ru": "Доставать/демонстрировать/использовать оружие в ЗЗ.",
+"uk": "Діставати/демонструвати/використовувати зброю в ГЗ.",
+"en": "Drawing/showing/using a weapon in a GZ."
+},
+"p": {
+"ru": "Штраф 4000$",
+"uk": "Штраф 4000$",
+"en": "4000$ fine"
+}
+},
+{
+"sub": "",
+"type": "severe",
+"t": {
+"ru": "Находиться в маске / скрывать лицо в ЗЗ.",
+"uk": "Перебувати в масці / приховувати обличчя в ГЗ.",
+"en": "Wearing a mask / hiding your face in a GZ."
+},
+"p": {
+"ru": "Штраф / депорт",
+"uk": "Штраф / депорт",
+"en": "Fine / deport"
+}
+}
+]
+},
+{
+"num": 4,
+"icon": "fa-road-barrier",
+"tt": {
+"ru": "КПП и блокпосты",
+"uk": "КПП та блокпости",
+"en": "Checkpoints"
+},
+"image": "https://i.ibb.co/1f1Gz91s/blockpostsmap.png",
+"items": [
+{
+"sub": "§4.1",
+"type": "fine",
+"t": {
+"ru": "Игнорирование требования остановки на КПП.",
+"uk": "Ігнорування вимоги зупинки на КПП.",
+"en": "Ignoring a stop order at a checkpoint."
+},
+"p": {
+"ru": "Штраф 5500€",
+"uk": "Штраф 5500€",
+"en": "5500€ fine"
+}
+},
+{
+"sub": "§4.2",
+"type": "fine",
+"t": {
+"ru": "Использование оружия на КПП.",
+"uk": "Використання зброї на КПП.",
+"en": "Using a weapon at a checkpoint."
+},
+"p": {
+"ru": "Штраф 8000€",
+"uk": "Штраф 8000€",
+"en": "8000€ fine"
+}
+},
+{
+"sub": "§4.3",
+"type": "severe",
+"t": {
+"ru": "Несообщение о наличии оружия на КПП.",
+"uk": "Не повідомлення про наявність зброї на КПП.",
+"en": "Failing to declare a weapon at a checkpoint."
+},
+"p": {
+"ru": "Штраф / депорт",
+"uk": "Штраф / депорт",
+"en": "Fine / deport"
+}
+},
+{
+"sub": "§4.4",
+"type": "fine",
+"t": {
+"ru": "Отказ от проверки документов.",
+"uk": "Відмова від перевірки документів.",
+"en": "Refusing a document check."
+},
+"p": {
+"ru": "Штраф 4000€",
+"uk": "Штраф 4000€",
+"en": "4000€ fine"
+}
+},
+{
+"sub": "§4.5",
+"type": "fine",
+"t": {
+"ru": "Проверка транспорта без RP-причины (со стороны полиции).",
+"uk": "Перевірка транспорту без RP-причини (з боку поліції).",
+"en": "Vehicle search without an RP reason (by police)."
+},
+"p": {
+"ru": "Штраф 6000€",
+"uk": "Штраф 6000€",
+"en": "6000€ fine"
+}
+}
+]
+},
+{
+"num": 5,
+"icon": "fa-gun",
+"tt": {
+"ru": "Оружие и лицензия",
+"uk": "Зброя та ліцензія",
+"en": "Weapons & license"
+},
+"items": [
+{
+"sub": "§5.1",
+"type": "fine",
+"t": {
+"ru": "Использование оружия без лицензии.",
+"uk": "Використання зброї без ліцензії.",
+"en": "Using a weapon without a license."
+},
+"p": {
+"ru": "Штраф 3000€",
+"uk": "Штраф 3000€",
+"en": "3000€ fine"
+}
+},
+{
+"sub": "§5.2",
+"type": "severe",
+"t": {
+"ru": "Использование оружия без обоснованных RP-причин.",
+"uk": "Використання зброї без обґрунтованих RP-причин.",
+"en": "Using a weapon without justified RP reasons."
+},
+"p": {
+"ru": "Депорт 1 день или штраф 8000€",
+"uk": "Депорт 1 день або штраф 8000€",
+"en": "Deport 1 day or 8000€ fine"
+}
+},
+{
+"sub": "§5.3",
+"type": "fine",
+"t": {
+"ru": "Открытое ношение оружия.",
+"uk": "Відкрите носіння зброї.",
+"en": "Open carry of a weapon."
+},
+"p": {
+"ru": "Штраф 5000€",
+"uk": "Штраф 5000€",
+"en": "5000€ fine"
+}
+},
+{
+"sub": "§5.4",
+"type": "fine",
+"t": {
+"ru": "Использование оружия в людном месте без оснований.",
+"uk": "Використання зброї у людному місці без підстав.",
+"en": "Using a weapon in a crowded place without grounds."
+},
+"p": {
+"ru": "Штраф 7000€",
+"uk": "Штраф 7000€",
+"en": "7000€ fine"
+}
+},
+{
+"sub": "§5.5",
+"type": "fine",
+"t": {
+"ru": "Передача оружия третьим лицам.",
+"uk": "Передача зброї третім особам.",
+"en": "Handing a weapon to third parties."
+},
+"p": {
+"ru": "Штраф 5000€",
+"uk": "Штраф 5000€",
+"en": "5000€ fine"
+}
+},
+{
+"sub": "§5.6",
+"type": "fine",
+"t": {
+"ru": "Нападени е на гос. сотрудника.",
+"uk": "Напад на гос працівника.",
+"en": "Handing a weapon to third parties."
+},
+"p": {
+"ru": "КПЗ",
+"uk": "КПЗ",
+"en": "5000€ fine"
+}
+},
+{
+"sub": "§5.7",
+"type": "fine",
+"t": {
+"ru": "Использование огнестрельно оружия в целях сопротивления против задержания.",
+"uk": "Використання вогне пальної зброї у цілях опіру затримання.",
+"en": "Handing a weapon to third parties."
+},
+"p": {
+"ru": "КПЗ",
+"uk": "КПЗ",
+"en": "5000€ fine"
+}
+}
+]
+},
+{
+"num": 6,
+"icon": "fa-bomb",
+"tt": {
+"ru": "Рейды",
+"uk": "Рейди",
+"en": "Raids"
+},
+"items": [
+{
+"sub": "",
+"type": "severe",
+"t": {
+"ru": "Проведение рейдов, создающих хаос без весомой RP-причины.",
+"uk": "Проведення рейдів, що створюють хаос без вагомої RP-причини.",
+"en": "Conducting raids that create chaos without a solid RP reason."
+},
+"p": {
+"ru": "Бессрочная депортация",
+"uk": "Безстрокова депортація",
+"en": "Permanent deport"
+}
+}
+]
+},
+{
+"num": 7,
+"icon": "fa-skull",
+"tt": {
+"ru": "Атака / DeathMatch",
+"uk": "Атака / DeathMatch",
+"en": "Attack / DeathMatch"
+},
+"items": [
+{
+"sub": "§7.1",
+"type": "severe",
+"t": {
+"ru": "RDM (Random DeathMatch).",
+"uk": "RDM (Random DeathMatch).",
+"en": "RDM (Random DeathMatch)."
+},
+"p": {
+"ru": "Депорт 1 день или штраф 8000€",
+"uk": "Депорт 1 день або штраф 8000€",
+"en": "Deport 1 day or 8000€ fine"
+}
+},
+{
+"sub": "§7.2",
+"type": "severe",
+"t": {
+"ru": "VDM (Vehicle DeathMatch).",
+"uk": "VDM (Vehicle DeathMatch).",
+"en": "VDM (Vehicle DeathMatch)."
+},
+"p": {
+"ru": "Депорт 1 день или штраф 8000€",
+"uk": "Депорт 1 день або штраф 8000€",
+"en": "Deport 1 day or 8000€ fine"
+}
+},
+{
+"sub": "§7.3",
+"type": "fine",
+"t": {
+"ru": "DM (нападение без RP-причин) от 2 ударов.",
+"uk": "DM (напад без RP-причин) від 2 ударів.",
+"en": "DM (attack without RP reasons) from 2 hits."
+},
+"p": {
+"ru": "Штраф или депорт (зависит от тяжести)",
+"uk": "Штраф або депорт (залежить від тяжкості)",
+"en": "Fine or deport (depends on severity)"
+}
+},
+{
+"sub": "§7.4",
+"type": "severe",
+"t": {
+"ru": "RK (Revenge Kill).",
+"uk": "RK (Revenge Kill).",
+"en": "RK (Revenge Kill)."
+},
+"p": {
+"ru": "Депорт 1 день",
+"uk": "Депорт 1 день",
+"en": "Deport 1 day"
+}
+},
+{
+"sub": "§7.5",
+"type": "fine",
+"t": {
+"ru": "PG (PowerGaming — нереалистичные действия).",
+"uk": "PG (PowerGaming – нереалістичні дії).",
+"en": "PG (PowerGaming – unrealistic actions)."
+},
+"p": {
+"ru": "Штраф 6500€",
+"uk": "Штраф 6500€",
+"en": "6500€ fine"
+}
+},
+{
+"sub": "§7.6",
+"type": "severe",
+"t": {
+"ru": "Отсутствие Fear RP.",
+"uk": "Відсутність Fear RP.",
+"en": "Lack of Fear RP."
+},
+"p": {
+"ru": "Депорт 1 сутки или штраф 8000€",
+"uk": "Депорт 1 доба або штраф 8000€",
+"en": "Deport 1 day or 8000€ fine"
+}
+},
+{
+"sub": "§7.7",
+"type": "severe",
+"t": {
+"ru": "NRP (нереалистичное поведение).",
+"uk": "NRP (нереалістична поведінка).",
+"en": "NRP (unrealistic behavior)."
+},
+"p": {
+"ru": "Депорт 1–10 дней или штраф 8000€",
+"uk": "Депорт 1–10 днів або штраф 8000€",
+"en": "Deport 1–10 days or 8000€ fine"
+}
+}
+]
+},
+{
+"num": 8,
+"icon": "fa-user",
+"tt": {
+"ru": "Внешний вид / скины",
+"uk": "Зовнішній вигляд / скіни",
+"en": "Appearance / skins"
+},
+"items": [
+{
+"sub": "§8.1",
+"type": "severe",
+"t": {
+"ru": "Оскорбительные скины, форма спецслужб, провокационные ники.",
+"uk": "Образливі скіни, форма спецслужб, провокаційні ніки.",
+"en": "Offensive skins, special-service uniforms, provocative nicknames."
+},
+"p": {
+"ru": "Предупреждение → временный / постоянный депорт",
+"uk": "Попередження → тимчасовий / постійний депорт",
+"en": "Warning → temporary / permanent deport"
+}
+},
+{
+"sub": "§8.2",
+"type": "severe",
+"t": {
+"ru": "Скины животных без правильной отыгровки.",
+"uk": "Скіни тварин без правильного відігравання.",
+"en": "Animal skins without proper roleplay."
+},
+"p": {
+"ru": "Депорт до 5 суток (или до 3 суток для аниматоров)",
+"uk": "Депорт до 5 діб (або до 3 діб для аніматорів)",
+"en": "Deport up to 5 days (or up to 3 days for animators)"
+}
+}
+]
+},
+{
+"num": 9,
+"icon": "fa-ban",
+"tt": {
+"ru": "Уклонение от наказания",
+"uk": "Уникнення покарання",
+"en": "Punishment evasion"
+},
+"items": [
+{
+"sub": "",
+"type": "severe",
+"t": {
+"ru": "Обход штрафов, банов через твинки и т.п.",
+"uk": "Обхід штрафів, банів через твінки тощо.",
+"en": "Evading fines or bans via alt accounts, etc."
+},
+"p": {
+"ru": "Депорт до 3 суток / навсегда (при обходе бана)",
+"uk": "Депорт до 3 діб / назавжди (при обході бану)",
+"en": "Deport up to 3 days / permanent (for ban evasion)"
+}
+}
+]
+},
+{
+"num": 10,
+"icon": "fa-robot",
+"tt": {
+"ru": "Non-RP поведение",
+"uk": "Non-RP поведінка",
+"en": "Non-RP behavior"
+},
+"items": [
+{
+"sub": "§10.1",
+"type": "severe",
+"t": {
+"ru": "Combat Logging (выход во время RP).",
+"uk": "Combat Logging (вихід під час RP).",
+"en": "Combat Logging (leaving during RP)."
+},
+"p": {
+"ru": "Депорт 1 день",
+"uk": "Депорт 1 день",
+"en": "Deport 1 day"
+}
+},
+{
+"sub": "§10.2",
+"type": "severe",
+"t": {
+"ru": "MetaGaming.",
+"uk": "MetaGaming.",
+"en": "MetaGaming."
+},
+"p": {
+"ru": "Депорт 1 день",
+"uk": "Депорт 1 день",
+"en": "Deport 1 day"
+}
+},
+{
+"sub": "§10.3",
+"type": "severe",
+"t": {
+"ru": "PowerGaming.",
+"uk": "PowerGaming.",
+"en": "PowerGaming."
+},
+"p": {
+"ru": "Штраф 7500€ или депорт 1 день",
+"uk": "Штраф 7500€ або депорт 1 день",
+"en": "7500€ fine or deport 1 day"
+}
+},
+{
+"sub": "§10.4",
+"type": "severe",
+"t": {
+"ru": "Fail RP.",
+"uk": "Fail RP.",
+"en": "Fail RP."
+},
+"p": {
+"ru": "Штраф 4500€ или депорт 1 день",
+"uk": "Штраф 4500€ або депорт 1 день",
+"en": "4500€ fine or deport 1 day"
+}
+},
+{
+"sub": "§10.5",
+"type": "severe",
+"t": {
+"ru": "Отсутствие Fear RP.",
+"uk": "Відсутність Fear RP.",
+"en": "Lack of Fear RP."
+},
+"p": {
+"ru": "Депорт 1 день",
+"uk": "Депорт 1 день",
+"en": "Deport 1 day"
+}
+},
+{
+"sub": "§10.6",
+"type": "severe",
+"t": {
+"ru": "CopBaiting.",
+"uk": "CopBaiting.",
+"en": "CopBaiting."
+},
+"p": {
+"ru": "Штраф 6700€ или депорт 1 день",
+"uk": "Штраф 6700€ або депорт 1 день",
+"en": "6700€ fine or deport 1 day"
+}
+},
+{
+"sub": "§10.7",
+"type": "fine",
+"t": {
+"ru": "Убийство AFK-персонажа.",
+"uk": "Вбивство AFK персонажа.",
+"en": "Killing an AFK character."
+},
+"p": {
+"ru": "Штраф 8000€",
+"uk": "Штраф 8000€",
+"en": "8000€ fine"
+}
+},
+{
+"sub": "§10.8",
+"type": "severe",
+"t": {
+"ru": "Bug Abuse.",
+"uk": "Bug Abuse.",
+"en": "Bug Abuse."
+},
+"p": {
+"ru": "Депорт 1 день",
+"uk": "Депорт 1 день",
+"en": "Deport 1 day"
+}
+}
+]
+},
+{
+"num": 11,
+"icon": "fa-handcuffs",
+"tt": {
+"ru": "NRP кафф (полиция)",
+"uk": "NRP кафф (поліція)",
+"en": "NRP cuffing (police)"
+},
+"items": [
+{
+"sub": "§11.1",
+"type": "fine",
+"t": {
+"ru": "Кафф без RP-причины.",
+"uk": "Кафф без RP-причини.",
+"en": "Cuffing without an RP reason."
+},
+"p": {
+"ru": "Штраф 6000€",
+"uk": "Штраф 6000€",
+"en": "6000€ fine"
+}
+},
+{
+"sub": "§11.2",
+"type": "fine",
+"t": {
+"ru": "Просмотр планшета для проверки без оснований.",
+"uk": "Перегляд планшету для перевірки без підстав.",
+"en": "Checking the tablet without grounds."
+},
+"p": {
+"ru": "Штраф 6000€",
+"uk": "Штраф 6000€",
+"en": "6000€ fine"
+}
+},
+{
+"sub": "§11.3",
+"type": "fine",
+"t": {
+"ru": "Фарм XP без разрешения гражданина.",
+"uk": "Фарм XP без дозволу громадянина.",
+"en": "Farming XP without the citizen's permission."
+},
+"p": {
+"ru": "Штраф 2000€",
+"uk": "Штраф 2000€",
+"en": "2000€ fine"
+}
+},
+{
+"sub": "§11.4",
+"type": "fine",
+"t": {
+"ru": "Кафф ради мести/троллинга.",
+"uk": "Кафф для помсти/тролінгу.",
+"en": "Cuffing for revenge/trolling."
+},
+"p": {
+"ru": "Штраф 3100€",
+"uk": "Штраф 3100€",
+"en": "3100€ fine"
+}
+},
+{
+"sub": "§11.5",
+"type": "fine",
+"t": {
+"ru": "Использование тайзера без RP-причин.",
+"uk": "Використання тайзера без RP-причин.",
+"en": "Using a taser without RP reasons."
+},
+"p": {
+"ru": "Штраф 3500€",
+"uk": "Штраф 3500€",
+"en": "3500€ fine"
+}
+},
+{
+"sub": "§11.6",
+"type": "fine",
+"t": {
+"ru": "Использование тайзера в green zone без причин.",
+"uk": "Використання тайзера у green zone без причин.",
+"en": "Using a taser in a green zone without reason."
+},
+"p": {
+"ru": "Штраф 3500€",
+"uk": "Штраф 3500€",
+"en": "3500€ fine"
+}
+},
+{
+"sub": "§11.7",
+"type": "fine",
+"t": {
+"ru": "Отходить дальше чем на 10 метров от офицера в наручниках.",
+"uk": "Відходити далі ніж на 10 метрів від офіцера в кайданах.",
+"en": "Moving more than 10 meters from the officer while cuffed."
+},
+"p": {
+"ru": "Штраф 1400€",
+"uk": "Штраф 1400€",
+"en": "1400€ fine"
+}
+},
+{
+"sub": "§11.8",
+"type": "fine",
+"t": {
+"ru": "Применение силы при задержании без необходимости.",
+"uk": "Застосування сили під час затримання без необхідності.",
+"en": "Using force during an arrest without necessity."
+},
+"p": {
+"ru": "Штраф 3500€",
+"uk": "Штраф 3500€",
+"en": "3500€ fine"
+}
+},
+{
+"sub": "§11.9",
+"type": "fine",
+"t": {
+"ru": "Ложный вызов гос. структур.",
+"uk": "Хибний виклик гос структур.",
+"en": "Using force during an arrest without necessity."
+},
+"p": {
+"ru": "Штраф 4500€",
+"uk": "Штраф 4500€",
+"en": "3500€ fine"
+}
+}
+]
+},
+{
+"num": 12,
+"icon": "fa-gavel",
+"tt": {
+"ru": "Суд",
+"uk": "Суд",
+"en": "Court"
+},
+"items": [
+{
+"sub": "§12.1",
+"type": "fine",
+"t": {
+"ru": "Давление на судью/офицера/адвоката.",
+"uk": "Тиск на суддю/офіцера/адвоката.",
+"en": "Pressuring the judge/officer/lawyer."
+},
+"p": {
+"ru": "Штраф 2500€",
+"uk": "Штраф 2500€",
+"en": "2500€ fine"
+}
+},
+{
+"sub": "§12.2",
+"type": "severe",
+"t": {
+"ru": "Прикрытие знакомых или друзей судьёй.",
+"uk": "Прикриття знайомих або друзів суддею.",
+"en": "A judge covering for acquaintances or friends."
+},
+"p": {
+"ru": "Снятие с должности",
+"uk": "Зняття з посади",
+"en": "Removal from position"
+}
+},
+{
+"sub": "§12.3",
+"type": "fine",
+"t": {
+"ru": "Халатность со стороны судьи.",
+"uk": "Халатність з боку судді.",
+"en": "Negligence by the judge."
+},
+"p": {
+"ru": "Штраф 3000€",
+"uk": "Штраф 3000€",
+"en": "3000€ fine"
+}
+},
+{
+"sub": "§12.4",
+"type": "severe",
+"t": {
+"ru": "Использование судейских полномочий для личной выгоды.",
+"uk": "Використання суддівських повноважень для особистої вигоди.",
+"en": "Using judicial powers for personal gain."
+},
+"p": {
+"ru": "Снятие с должности",
+"uk": "Зняття з посади",
+"en": "Removal from position"
+}
+},
+{
+"sub": "§12.5",
+"type": "fine",
+"t": {
+"ru": "Неадекватное поведение в зале суда.",
+"uk": "Неадекватна поведінка в залі суду.",
+"en": "Inappropriate behavior in the courtroom."
+},
+"p": {
+"ru": "Штраф 1200€",
+"uk": "Штраф 1200€",
+"en": "1200€ fine"
+}
+},
+{
+"sub": "§12.6",
+"type": "fine",
+"t": {
+"ru": "Перебивание Судьи/Адвоката.",
+"uk": "Перебивання Судді/Адвоката.",
+"en": "Interrupting the judge/lawyer."
+},
+"p": {
+"ru": "Штраф 1200€",
+"uk": "Штраф 1200€",
+"en": "1200€ fine"
+}
+},
+{
+"sub": "§12.7",
+"type": "severe",
+"t": {
+"ru": "Нападение/драка в зале суда.",
+"uk": "Напад/бійка у залі суду.",
+"en": "Assault/fight in the courtroom."
+},
+"p": {
+"ru": "КПЗ",
+"uk": "КПЗ",
+"en": "Detention (КПЗ)"
+}
+},
+{
+"sub": "§12.8",
+"type": "severe",
+"t": {
+"ru": "Игнорирование решения суда.",
+"uk": "Ігнорування рішення суду.",
+"en": "Ignoring a court ruling."
+},
+"p": {
+"ru": "Депорт 1 день",
+"uk": "Депорт 1 день",
+"en": "Deport 1 day"
+}
+},
+{
+"sub": "§12.9",
+"type": "severe",
+"t": {
+"ru": "Игнорирование RP-замечания охраны суда.",
+"uk": "Ігнорування RP-зауваження охорони суду.",
+"en": "Ignoring an RP warning from court security."
+},
+"p": {
+"ru": "Депорт 1 день",
+"uk": "Депорт 1 день",
+"en": "Deport 1 day"
+}
+},
+{
+"sub": "§12.10",
+"type": "severe",
+"t": {
+"ru": "Кафф без RP-причин.",
+"uk": "Кафф без RP-причин.",
+"en": "Cuffing without RP reasons."
+},
+"p": {
+"ru": "Депорт 1 день",
+"uk": "Депорт 1 день",
+"en": "Deport 1 day"
+}
+},
+{
+"sub": "§12.11",
+"type": "fine",
+"t": {
+"ru": "Находиться на территории зала суда могут только адвокаты, судьи, офицеры и задержанные.",
+"uk": "Знаходитися на території залу суду можуть тільки адвокати, судді, офіцери та затримані.",
+"en": "Only lawyers, judges, officers and detainees may be in the courtroom area."
+},
+"p": {
+"ru": "Штраф 3000€",
+"uk": "Штраф 3000€",
+"en": "3000€ fine"
+}
+}
+]
+},
+{
+"num": 13,
+"icon": "fa-microphone",
+"tt": {
+"ru": "Голосовой чат | Пропаганда",
+"uk": "Голосовий чат | Пропаганда",
+"en": "Voice chat"
+},
+"items": [
+{
+"sub": "§13.2",
+"type": "severe",
+"t": {
+"ru": "Посторонние громкие звуки, музыка без согласия.",
+"uk": "Сторонні гучні звуки, музика без згоди.",
+"en": "External loud sounds, music without consent."
+},
+"p": {
+"ru": "Штраф 5000€ или депорт до 3 суток",
+"uk": "Штраф 5000€ або депорт до 3 діб",
+"en": "5000€ fine or deport up to 3 days"
+}
+},
+{
+"sub": "§13.3",
+"type": "severe",
+"t": {
+"ru": "Будь какая прапанда что хоть как-то касается политики стран.",
+"uk": "Будь яка пропаганда що хоч якось торкаєтся політики країн.",
+"en": "Russian propaganda."
+},
+"p": {
+"ru": "Депорт 15 - 25",
+"uk": "Депорт 15 - 25",
+"en": "Permanent deport"
+}
+},
+{
+"sub": "§13.3",
+"type": "severe",
+"t": {
+"ru": "Патриотическая музыка в голосовом чате.",
+"uk": "Патріотична музика в голосовому чаті.",
+"en": "Russian music in voice chat."
+},
+"p": {
+"ru": "Депорт до 2 - 5 суток",
+"uk": "Депорт до 2 - 5 діб",
+"en": "Deport up to 2 days"
+}
+},
+{
+"sub": "§13.5",
+"type": "severe",
+"t": {
+"ru": "Перебивание, создание шума в голосовом чате.",
+"uk": "Перебивання, створення шуму в голосовому чаті.",
+"en": "Interrupting, making noise in voice chat."
+},
+"p": {
+"ru": "Депорт до 2 суток или кик",
+"uk": "Депорт до 2 діб або кік",
+"en": "Deport up to 2 days or kick"
+}
+},
+{
+"sub": "§13.6",
+"type": "fine",
+"t": {
+"ru": "Войсченджер, использование ПО для изменения реального голоса.",
+"uk": "Войсченжер, використання ПО для зміни реального голосу.",
+"en": "Voice changer, using software to alter your real voice."
+},
+"p": {
+"ru": "На рассмотрение администрации проекта",
+"uk": "На думку адміністрації проекта",
+"en": "Deport up to 5"
+}
+}
+]
+},
+{
+"num": 14,
+"icon": "fa-comment-slash",
+"tt": {
+"ru": "Спам и реклама",
+"uk": "Спам та реклама",
+"en": "Spam & advertising"
+},
+"items": [
+{
+"sub": "",
+"type": "severe",
+"t": {
+"ru": "Спам в чате, массовые приглашения в группы и т.п.",
+"uk": "Спам в чаті, масові запрошення в групи тощо.",
+"en": "Spam in chat, mass group invites, etc."
+},
+"p": {
+"ru": "Временный или постоянный депорт",
+"uk": "Тимчасовий або постійний депорт",
+"en": "Temporary / permanent deport"
+}
+}
+]
+},
+{
+"num": 15,
+"icon": "fa-users",
+"tt": {
+"ru": "Митинг",
+"uk": "Мітінг",
+"en": "Rally"
+},
+"items": [
+{
+"sub": "§15.1",
+"type": "fine",
+"t": {
+"ru": "Использование оружия на митинге.",
+"uk": "Використання зброї на мітингу.",
+"en": "Using a weapon at a rally."
+},
+"p": {
+"ru": "Штраф 8000€",
+"uk": "Штраф 8000€",
+"en": "8000€ fine"
+}
+},
+{
+"sub": "§15.2",
+"type": "fine",
+"t": {
+"ru": "Участие в митинге.",
+"uk": "Участь у мітингу.",
+"en": "Participating in a rally."
+},
+"p": {
+"ru": "Штраф 1000€",
+"uk": "Штраф 1000€",
+"en": "1000€ fine"
+}
+},
+{
+"sub": "§15.3",
+"type": "fine",
+"t": {
+"ru": "Перекрытие дороги во время митинга.",
+"uk": "Перекриття дороги під час мітингу.",
+"en": "Blocking the road during a rally."
+},
+"p": {
+"ru": "Штраф 5000€",
+"uk": "Штраф 5000€",
+"en": "5000€ fine"
+}
+},
+{
+"sub": "§15.4",
+"type": "fine",
+"t": {
+"ru": "Использование пиротехники на митинге.",
+"uk": "Використання піротехніки на мітингу.",
+"en": "Using pyrotechnics at a rally."
+},
+"p": {
+"ru": "Штраф 8000€",
+"uk": "Штраф 8000€",
+"en": "8000€ fine"
+}
+},
+{
+"sub": "15.5",
+"type": "fine",
+"t": {
+"ru": "Перекрытие дорог транспортом во время митинга.",
+"uk": "Перекриття доріг транспортом під час мітінгую.",
+"en": "Using pyrotechnics at a rally."
+},
+"p": {
+"ru": "Штраф 8000€",
+"uk": "Штраф 8000€",
+"en": "8000€ fine"
+}
+}
+]
+},
+{
+"num": 16,
+"icon": "fa-person-running",
+"tt": {
+"ru": "Bunnyhop (Bhop)",
+"uk": "Bunnyhop (Bhop)",
+"en": "Bunnyhop (Bhop)"
+},
+"items": [
+{
+"sub": "",
+"type": "severe",
+"t": {
+"ru": "Непрерывные прыжки для ускорения / преимущества в бою.",
+"uk": "Безперервні стрибки для прискорення / переваги в бою.",
+"en": "Continuous jumping for speed / combat advantage."
+},
+"p": {
+"ru": "Предупреждение → депорт 2 суток",
+"uk": "Попередження → депорт 2 доби",
+"en": "Warning → deport 2 days"
+}
+}
+]
+},
+{
+"num": 17,
+"icon": "fa-hand-holding-dollar",
+"tt": {
+"ru": "Коррупция",
+"uk": "Корупція",
+"en": "Corruption"
+},
+"items": [
+{
+"sub": "§17.1",
+"type": "fine",
+"t": {
+"ru": "Предложение взятки.",
+"uk": "Пропозиція хабара.",
+"en": "Offering a bribe."
+},
+"p": {
+"ru": "Штраф от 4000–16000€",
+"uk": "Штраф від 4000–16000€",
+"en": "Fine 4000–16000€"
+}
+},
+{
+"sub": "§17.2",
+"type": "fine",
+"t": {
+"ru": "Принятие взятки.",
+"uk": "Прийняття хабара.",
+"en": "Accepting a bribe."
+},
+"p": {
+"ru": "Штраф 5500€",
+"uk": "Штраф 5500€",
+"en": "5500€ fine"
+}
+},
+{
+"sub": "§17.3",
+"type": "fine",
+"t": {
+"ru": "Посредничество в коррупционных действиях.",
+"uk": "Посередництво у корупційних діях.",
+"en": "Mediating in corrupt acts."
+},
+"p": {
+"ru": "Штраф 4000€",
+"uk": "Штраф 4000€",
+"en": "4000€ fine"
+}
+},
+{
+"sub": "§17.4",
+"type": "fine",
+"t": {
+"ru": "Сокрытие коррупции.",
+"uk": "Приховування корупції.",
+"en": "Concealing corruption."
+},
+"p": {
+"ru": "Штраф 5000€",
+"uk": "Штраф 5000€",
+"en": "5000€ fine"
+}
+}
+]
+},
+{
+"num": 18,
+"icon": "fa-house",
+"tt": {
+"ru": "Присвоение территории",
+"uk": "Привласнення території",
+"en": "Territory seizure"
+},
+"items": [
+{
+"sub": "§18.1",
+"type": "severe",
+"t": {
+"ru": "Незаконное присвоение чужой территории.",
+"uk": "Незаконне привласнення чужої території.",
+"en": "Illegally seizing someone else's territory."
+},
+"p": {
+"ru": "Штраф 4500€ или депорт до 2 суток",
+"uk": "Штраф 4500€ або депорт до 2 діб",
+"en": "4500€ fine or deport up to 2 days"
+}
+},
+{
+"sub": "§18.2",
+"type": "fine",
+"t": {
+"ru": "Проникновение на чужую присвоенную территорию.",
+"uk": "Проникнення на чужу привласнену територію.",
+"en": "Entering someone else's claimed territory."
+},
+"p": {
+"ru": "Предупреждение или штраф 4500€",
+"uk": "Попередження або штраф 4500€",
+"en": "Warning or 4500€ fine"
+}
+},
+{
+"sub": "§18.3",
+"type": "fine",
+"t": {
+"ru": "Препятствование действиям экстренных служб.",
+"uk": "Перешкоджання діям екстрених служб.",
+"en": "Obstructing emergency services."
+},
+"p": {
+"ru": "Штраф 4500€",
+"uk": "Штраф 4500€",
+"en": "4500€ fine"
+}
+}
+]
+},
+{
+"num": 19,
+"icon": "fa-bug",
+"tt": {
+"ru": "Читы и баги",
+"uk": "Чити та баги",
+"en": "Cheats & bugs"
+},
+"items": [
+{
+"sub": "",
+"type": "severe",
+"t": {
+"ru": "Использование читов, стороннего ПО, багов.",
+"uk": "Використання читів, стороннього ПЗ, багів.",
+"en": "Using cheats, third-party software, bugs."
+},
+"p": {
+"ru": "Бессрочная депортация",
+"uk": "Безстрокова депортація",
+"en": "Permanent deport"
+}
+}
+]
+},
+{
+"num": 20,
+"icon": "fa-door-open",
+"tt": {
+"ru": "Выход во время RP",
+"uk": "Вихід під час RP",
+"en": "Leaving during RP"
+},
+"items": [
+{
+"sub": "§20.1",
+"type": "severe",
+"t": {
+"ru": "Выход с сервера во время активной RP-сцены / преследования.",
+"uk": "Вихід з сервера під час активної RP-сцени / переслідування.",
+"en": "Leaving the server during an active RP scene / pursuit."
+},
+"p": {
+"ru": "Предупреждение → депорт 4 суток",
+"uk": "Попередження → депорт 4 доби",
+"en": "Warning → deport 4 days"
+}
+},
+{
+"sub": "§20.2",
+"type": "severe",
+"t": {
+"ru": "В наручниках нельзя заходить на территорию своей фракции.",
+"uk": "У кайданах не можна заходити на тереторію своєї фракції.",
+"en": "While cuffed you can't enter your faction's territory."
+},
+"p": {
+"ru": "депорт 3 суток",
+"uk": "депорт 3 доби",
+"en": "deport 3 days"
+}
+},
+{
+"sub": "§20.3",
+"type": "severe",
+"t": {
+"ru": "Выход с сервера после суда",
+"uk": "Вихід з серверу після суду",
+"en": "While cuffed you can't enter your faction's territory."
+},
+"p": {
+"ru": "депорт 2 суток",
+"uk": "депорт 2 доби",
+"en": "deport 3 days"
+}
+},
+{
+"sub": "§20.4",
+"type": "severe",
+"t": {
+"ru": "Выход с сервера во время отбывания срока в Demorgan",
+"uk": "Вихід з серверу підчас відбування сроку у Demorgan",
+"en": "While cuffed you can't enter your faction's territory."
+},
+"p": {
+"ru": "депорт 1 - 7 суток",
+"uk": "депорт 1- 7 доби",
+"en": "deport 3 days"
+}
+},
+{
+"sub": "§20.5",
+"type": "severe",
+"t": {
+"ru": "Помощь в NRP/RP побеге из Суда или Федеральной Тюрьмы.",
+"uk": "Допомога у NRP/RP втечі з Суду або Федеральної в'язниці.",
+"en": "While cuffed you can't enter your faction's territory."
+},
+"p": {
+"ru": "депорт 1 - 10 суток",
+"uk": "депорт 1- 10 доби",
+"en": "deport 3 days"
+}
+}
+]
+},
+{
+"num": 21,
+"icon": "fa-fire",
+"tt": {
+"ru": "Пиротехника",
+"uk": "Піротехніка",
+"en": "Pyrotechnics"
+},
+"items": [
+{
+"sub": "§21.1",
+"type": "severe",
+"t": {
+"ru": "Использование пиротехники в людных местах.",
+"uk": "Використання піротехніки у людних місцях.",
+"en": "Using pyrotechnics in crowded places."
+},
+"p": {
+"ru": "Предупреждение → депорт 2 суток",
+"uk": "Попередження → депорт 2 доби",
+"en": "Warning → deport 2 days"
+}
+},
+{
+"sub": "§21.2",
+"type": "severe",
+"t": {
+"ru": "Нападение на гос. структуры с использованием пиротехники.",
+"uk": "Напад на гос.структури з використанням піротехніки.",
+"en": "Attacking government structures using pyrotechnics."
+},
+"p": {
+"ru": "депорт 1 сутки",
+"uk": "депорт 1 доба",
+"en": "deport 1 day"
+}
+},
+{
+"sub": "§21.3",
+"type": "severe",
+"t": {
+"ru": "Злоупотребление пиротехникой во время RP.",
+"uk": "Зловживання піротехніки під час RP.",
+"en": "Abusing pyrotechnics during RP."
+},
+"p": {
+"ru": "депорт 2 суток",
+"uk": "депорт 2 доби",
+"en": "deport 2 days"
+}
+},
+{
+"sub": "§21.4",
+"type": "severe",
+"t": {
+"ru": "Бросание пиротехники в суде или полицейском участке.",
+"uk": "Кидання піротехніки у суді або поліцейському-участку.",
+"en": "Throwing pyrotechnics in court or a police station."
+},
+"p": {
+"ru": "Предупреждение или депорт до 2 суток",
+"uk": "Попередження або депорт до 2 діб",
+"en": "Warning or deport up to 2 days"
+}
+}
+]
+},
+{
+"num": 22,
+"icon": "fa-gavel",
+"tt": {
+"ru": "Процессуальные действия",
+"uk": "Процесуальні дії",
+"en": "Procedural actions"
+},
+"items": [
+{
+"sub": "§22.1",
+"type": "fine",
+"t": {
+"ru": "Непредставление (имя, звание, подразделение).",
+"uk": "Непредставлення (ім'я, звання, підрозділ).",
+"en": "Failure to introduce yourself (name, rank, unit)."
+},
+"p": {
+"ru": "Штраф 1500€",
+"uk": "Штраф 1500€",
+"en": "1500€ fine"
+}
+},
+{
+"sub": "§22.2",
+"type": "fine",
+"t": {
+"ru": "Отсутствие видеофиксации задержания.",
+"uk": "Відсутність відеофіксації затримання.",
+"en": "No video recording of the arrest."
+},
+"p": {
+"ru": "Штраф 2500€",
+"uk": "Штраф 2500€",
+"en": "2500€ fine"
+}
+},
+{
+"sub": "§22.3",
+"type": "fine",
+"t": {
+"ru": "Неразъяснение прав (Миранда).",
+"uk": "Не роз'яснення прав (Міранда).",
+"en": "Not reading rights (Miranda)."
+},
+"p": {
+"ru": "Штраф 4500€",
+"uk": "Штраф 4500€",
+"en": "4500€ fine"
+}
+},
+{
+"sub": "§22.4",
+"type": "fine",
+"t": {
+"ru": "Не описан состав преступления. Состав преступления: 1. дата и время задержания. 2. задержавший. 3. при каких обстоятельствах было задержание. 4. какие статьи нарушил. 5. какие статьи вы нарушили",
+"uk": "Не опис складу злочину. Склад злочину: 1. дата та час затримання. 2. затримувач. 3. за яких обставин був/була затримання. 4. які статьї нарушив. 5. які статті ви порушили",
+"en": "Failure to describe the offense. Offense details: 1. date and time of arrest. 2. arresting officer. 3. circumstances of the arrest. 4. which articles were violated. 5. which articles you violated."
+},
+"p": {
+"ru": "Штраф 2500€",
+"uk": "Штраф 2500€",
+"en": "2500€ fine"
+}
+},
+{
+"sub": "§22.5",
+"type": "fine",
+"t": {
+"ru": "Необъявление статей задержанному.",
+"uk": "Не оголошення статей затриманому.",
+"en": "Not announcing the charges to the detainee."
+},
+"p": {
+"ru": "Штраф 3500€",
+"uk": "Штраф 3500€",
+"en": "3500€ fine"
+}
+}
+]
+},
+{
+"num": 23,
+"icon": "fa-sack-dollar",
+"tt": {
+"ru": "Ограбление",
+"uk": "Пограбування",
+"en": "Robbery"
+},
+"items": [
+{
+"sub": "§23",
+"type": "fine",
+"t": {
+"ru": "Ограбление магазина.",
+"uk": "Пограбування магазину.",
+"en": "Robbing a store."
+},
+"p": {
+"ru": "Штраф 6500$ или КПЗ",
+"uk": "Штраф 6500$ або КПЗ",
+"en": "6500$ fine or detention"
+}
+},
+{
+"sub": "§23.1",
+"type": "fine",
+"t": {
+"ru": "Ограбление заправки.",
+"uk": "Пограбування заправки.",
+"en": "Robbing a gas station."
+},
+"p": {
+"ru": "Штраф 6500$ или КПЗ",
+"uk": "Штраф 6500$ або КПЗ",
+"en": "6500$ fine or detention"
+}
+},
+{
+"sub": "§23.2",
+"type": "fine",
+"t": {
+"ru": "Ограбление ювелирного магазина.",
+"uk": "Пограбування ювелірного магазину.",
+"en": "Robbing a jewelry store."
+},
+"p": {
+"ru": "Штраф на усмотрение администрации или КПЗ",
+"uk": "Штраф на розсуд адміністрації або КПЗ",
+"en": "Fine at admin's discretion or detention"
+}
+},
+{
+"sub": "§23.3",
+"type": "fine",
+"t": {
+"ru": "Ограбление сейфа.",
+"uk": "Пограбування сейфа.",
+"en": "Robbing a safe."
+},
+"p": {
+"ru": "КПЗ",
+"uk": "КПЗ",
+"en": "Detention"
+}
+},
+{
+"sub": "§23.4",
+"type": "fine",
+"t": {
+"ru": "Ограбление контейнера.",
+"uk": "Пограбування контейнера.",
+"en": "Robbing a container."
+},
+"p": {
+"ru": "КПЗ",
+"uk": "КПЗ",
+"en": "Detention"
+}
+},
+{
+"sub": "§23.5",
+"type": "fine",
+"t": {
+"ru": "Ограбление банка.",
+"uk": "Пограбування банку.",
+"en": "Robbing a bank."
+},
+"p": {
+"ru": "КПЗ",
+"uk": "КПЗ",
+"en": "Detention"
+}
+},
+{
+"sub": "§23.6",
+"type": "fine",
+"t": {
+"ru": "Ограбление торгового автомата.",
+"uk": "Пограбування торгового-автомату.",
+"en": "Robbing a vending machine."
+},
+"p": {
+"ru": "КПЗ",
+"uk": "КПЗ",
+"en": "Detention"
+}
+}
+]
+},
+{
+"num": 24,
+"icon": "fa-hand",
+"tt": {
+"ru": "Провокация",
+"uk": "Провокування",
+"en": "Provocation"
+},
+"items": [
+{
+"sub": "§24.1",
+"type": "fine",
+"t": {
+"ru": "Провокация гос. работника с использованием огнестрельного оружия.",
+"uk": "Провокування гос працівника з використанням вогнепальної зброї.",
+"en": "Provoking a government worker using a firearm."
+},
+"p": {
+"ru": "Штраф 4500",
+"uk": "Штраф 4500",
+"en": "4500 fine"
+}
+},
+{
+"sub": "§24.2",
+"type": "fine",
+"t": {
+"ru": "Провокация криминалом работников гос. структуры огнестрельным оружием.",
+"uk": "Провокування крайм працівникам гос структури вогнепальної зброї.",
+"en": "Criminals provoking government workers with a firearm."
+},
+"p": {
+"ru": "Штраф 4500",
+"uk": "Штраф 4500",
+"en": "4500 fine"
+}
+},
+{
+"sub": "§24.3",
+"type": "fine",
+"t": {
+"ru": "Провокация гос. работника заехать на закрытую территорию.",
+"uk": "Провокування гос працівника заїхати на закр.територію.",
+"en": "Provoking a government worker to enter a closed area."
+},
+"p": {
+"ru": "Штраф 3500 или КПЗ",
+"uk": "Штраф 3500 або КПЗ",
+"en": "3500 fine or detention"
+}
+},
+{
+"sub": "§24.4",
+"type": "fine",
+"t": {
+"ru": "Провокация гос. работника на использование нецензурной лексики во время задержания.",
+"uk": "Провокування гос працівника на використання не культурної лексики під час затримання.",
+"en": "Provoking a government worker into using foul language during an arrest."
+},
+"p": {
+"ru": "Штраф 5000",
+"uk": "Штраф 5000",
+"en": "5000 fine"
+}
+},
+{
+"sub": "§24.5",
+"type": "fine",
+"t": {
+"ru": "Провокация гос. работника на нарушение статьи 22.",
+"uk": "Провокування гос працівника на порушення статті 22.",
+"en": "Provoking a government worker into violating article 22."
+},
+"p": {
+"ru": "Штраф 3000",
+"uk": "Штраф 3000",
+"en": "3000 fine"
+}
+},
+{
+"sub": "§24.6",
+"type": "fine",
+"t": {
+"ru": "Провокация гос. работника на использование тайзера.",
+"uk": "Провокування гос працівника на використання тайзера.",
+"en": "Provoking a government worker into using a taser."
+},
+"p": {
+"ru": "Штраф 4000",
+"uk": "Штраф 4000",
+"en": "4000 fine"
+}
+}
+]
+},
+{
+"num": 25,
+"icon": "fa-people-arrows",
+"tt": {
+"ru": "Тиминг",
+"uk": "Тімінг",
+"en": "Teaming"
+},
+"items": [
+{
+"sub": "§25.1",
+"type": "severe",
+"t": {
+"ru": "Гражданин не может катать/подбирать крайм (исклюбчение: при обычной езде).",
+"uk": "Громадянин не може катати/підібрати крайм.(виключення: при звичайній їзді)",
+"en": "A citizen can't drive/pick up criminals."
+},
+"p": {
+"ru": "1 сутки депорта",
+"uk": "1 доба депорту",
+"en": "1 day deport"
+}
+},
+{
+"sub": "§25.2",
+"type": "severe",
+"t": {
+"ru": "Полиция не должна иметь никаких связей с краймом.",
+"uk": "Поліція не повинна мати жодних зв'язком з краймом.",
+"en": "Police must have no ties with criminals."
+},
+"p": {
+"ru": "3 суток",
+"uk": "3 доби",
+"en": "3 days"
+}
+},
+{
+"sub": "§25.3",
+"type": "severe",
+"t": {
+"ru": "Тиминг любой.",
+"uk": "Тімінг будь який.",
+"en": "Any teaming."
+},
+"p": {
+"ru": "КПЗ или депорт 4 суток",
+"uk": "КПЗ або депорт 4 доби",
+"en": "Detention or deport 4 days"
+}
+}
+]
+},
+{
+"num": 26,
+"icon": "fa-mask",
+"tt": {
+"ru": "Похищение",
+"uk": "Викрадення",
+"en": "Kidnapping"
+},
+"items": [
+{
+"sub": "§26.1",
+"type": "severe",
+"t": {
+"ru": "При похищении нужно позвонить в полицию и вызвать переговорщика на место, где находится похищенный.",
+"uk": "Під час викрадення повинні подзвонити у поліцію та запросити перемовника на місце де знаходится викрадений.",
+"en": "During a kidnapping you must call the police and request a negotiator at the victim's location."
+},
+"p": {
+"ru": "Депорт 1 сутки",
+"uk": "Депорт 1 доба",
+"en": "Deport 1 day"
+}
+},
+{
+"sub": "§26.2",
+"type": "fine",
+"t": {
+"ru": "На приезд переговорщика есть 10 минут.",
+"uk": "На приїзд перемовника є 10 хвилин.",
+"en": "The negotiator has 10 minutes to arrive."
+},
+"p": {
+"ru": "Штраф 4500",
+"uk": "Штраф 4500",
+"en": "4500 fine"
+}
+},
+{
+"sub": "§26.3",
+"type": "severe",
+"t": {
+"ru": "Не был вызван переговорщик на место переговоров.",
+"uk": "Не було викликано перемовника на місце переговорів.",
+"en": "No negotiator was called to the negotiation site."
+},
+"p": {
+"ru": "Депорт 1 сутки",
+"uk": "Депорт 1 доба",
+"en": "Deport 1 day"
+}
+},
+{
+"sub": "§26.4",
+"type": "severe",
+"t": {
+"ru": "Были выдвинуты завышенные требования.",
+"uk": "Було висуното великі вимоги.",
+"en": "Excessive demands were made."
+},
+"p": {
+"ru": "Штурм территории",
+"uk": "Штурм території",
+"en": "Territory assault"
+}
+},
+{
+"sub": "§26.5",
+"type": "severe",
+"t": {
+"ru": "Переговорщик должен убедится что похищенный в полном порядке и не получал каких либо физических - психических травм.",
+"uk": "Перемовник повинен переконатись що викраденний у повному порядку та не отримував якихось фізичних - психічних травм. ",
+"en": "Excessive demands were made."
+},
+"p": {
+"ru": "Штурм территории",
+"uk": "Штурм території",
+"en": "Territory assault"
+}
+}
+]
+},
+{
+"num": 27,
+"icon": "fa-ban",
+"tt": {
+"ru": "Домогательства",
+"uk": "Домагання",
+"en": "Harassment"
+},
+"items": [
+{
+"sub": "§27.1",
+"type": "severe",
+"t": {
+"ru": "Обычное домогательство к игроку, которому нет 18 лет.",
+"uk": "Звичайне домагання до гравця, якому немає 18 років.",
+"en": "Harassment of a player under 18."
+},
+"p": {
+"ru": "Бан 30 дней",
+"uk": "Бан 30 днів",
+"en": "Ban 30 days"
+}
+},
+{
+"sub": "§27.2",
+"type": "severe",
+"t": {
+"ru": "Домогательство к лицу младше 18 лет со стороны участника гос. фракции.",
+"uk": "Домагання до особи віком до 18 років з боку учасника держ. фракції.",
+"en": "Harassment of a person under 18 by a member of a government faction."
+},
+"p": {
+"ru": "Снятие с должности + бан 10 дней",
+"uk": "Зняття з посади + бан 10 днів",
+"en": "Removal from position + 10-day ban"
+}
+},
+{
+"sub": "§27.3",
+"type": "severe",
+"t": {
+"ru": "Отыгровка 18+ контента без предварительного согласия другого игрока.",
+"uk": "Отигровка 18+ контенту без попередньої згоди іншого гравця.",
+"en": "Roleplaying 18+ content without the other player's prior consent."
+},
+"p": {
+"ru": "КПЗ 120 мин / Депорт 1 сутки",
+"uk": "КПЗ 120 хв / Депорт 1 доба",
+"en": "Detention 120 min / Deport 1 day"
+}
+},
+{
+"sub": "§27.4",
+"type": "severe",
+"t": {
+"ru": "Принудительная отыгровка действий сексуального характера (без согласия).",
+"uk": "Примусова отигровка дій сексуального характеру (без згоди).",
+"en": "Forced roleplay of sexual acts (without consent)."
+},
+"p": {
+"ru": "Депорт 3-5 суток / Бан",
+"uk": "Депорт 3-5 діб / Бан",
+"en": "Deport 3–5 days / Ban"
+}
+}
+]
+}
+];
+let lang='ru', activeFilter='all';
+
+function setSwitchFlag(){
+  const s=document.getElementById('langSwitch');
+  s.classList.remove('flag-ru','flag-uk');
+  s.classList.add(lang==='uk'?'flag-uk':'flag-ru');
+}
+function positionPill(instant){
+  const pill=document.getElementById('pill');
+  const a=document.querySelector('.chip.active');
+  if(!a)return;
+  if(instant)pill.style.transition='none';
+  pill.style.width=a.offsetWidth+'px';
+  pill.style.transform='translateX('+a.offsetLeft+'px)';
+  if(instant)requestAnimationFrame(()=>{pill.style.transition='';});
+}
+function applyLang(){
+  const t=i18n[lang];
+  document.documentElement.lang=lang;
+  document.getElementById('search').placeholder=t.search;
+  document.getElementById('curLang').textContent=t.code;
+  document.getElementById('langSwitch').title=t.switch;
+  const c=document.querySelectorAll('.chip');
+  c[0].textContent=t.all;c[1].textContent=t.fine;c[2].textContent=t.severe;
+  setSwitchFlag();render();
+  requestAnimationFrame(()=>positionPill(true));
+}
+function pickLang(l){
+  lang=l;applyLang();
+  const g=document.getElementById('gate');g.classList.add('hide');
+  setTimeout(()=>{g.style.display='none';g.classList.remove('anim');},520);
+}
+function reopenGate(){
+  const g=document.getElementById('gate');
+  g.style.display='flex';g.classList.remove('hide');
+  void g.offsetWidth;g.classList.add('anim');
+}
+
+function render(){
+  const t=i18n[lang];
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const grid=document.getElementById('grid');
+  let html='',shown=0,i=0;
+  rules.forEach(rule=>{
+    const title=rule.tt[lang]||rule.tt.uk;
+    const typeOK=activeFilter==='all'||rule.items.some(x=>x.type===activeFilter);
+    const inTitle=title.toLowerCase().includes(q);
+    const inItems=q!==''&&rule.items.some(x=>(x.t[lang]+' '+x.p[lang]+' '+(x.sub||'')).toLowerCase().includes(q));
+    if(!(typeOK&&(q===''||inTitle||inItems)))return;
+    shown++;
+    html+='<div class="rule-btn" data-n="'+rule.num+'" style="animation-delay:'+(i++*0.03)+'s"><span class="num">'+rule.num+'</span><i class="ico fa-solid '+rule.icon+'"></i><span class="ttl">'+title+'</span></div>';
+  });
+  grid.innerHTML=html;
+  const e=document.getElementById('empty');
+  e.textContent=t.empty;e.style.display=shown?'none':'block';
+}
+document.getElementById('grid').addEventListener('click',e=>{
+  const b=e.target.closest('.rule-btn');if(!b)return;
+  const rule=rules.find(r=>r.num==b.dataset.n);if(rule)openModal(rule);
+});
+
+let itemObserver=null;
+function openModal(rule){
+  const t=i18n[lang];
+  document.getElementById('modalTitle').textContent=rule.num+'. '+(rule.tt[lang]||rule.tt.uk);
+  let h='';
+  if(rule.image)h+='<img class="map-img" src="'+rule.image+'" alt="">';
+  rule.items.forEach(x=>{
+    if(activeFilter!=='all'&&x.type!==activeFilter)return;
+    h+='<div class="item">'+(x.sub?'<h4>'+x.sub+'</h4>':'')+'<p>'+x.t[lang]+'</p><span class="penalty '+x.type+'">'+t.penalty+': '+x.p[lang]+'</span></div>';
+  });
+  const body=document.getElementById('modalBody');
+  body.innerHTML=h;
+  const scroller=document.querySelector('#modal .modal-scroll');
+  scroller.scrollTop=0;
+  const modal=document.getElementById('modal');
+  modal.classList.add('show');
+  requestAnimationFrame(()=>{ if(window.modalSliderUpdate)window.modalSliderUpdate(); });
+
+  if(itemObserver)itemObserver.disconnect();
+  const items=[...body.querySelectorAll('.item')];
+
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches || !('IntersectionObserver' in window)){
+    items.forEach(it=>it.classList.add('in'));
+    return;
+  }
+
+  // надёжный каскад: каждый «пакет» появившихся подпунктов
+  // сортируется по позиции и проявляется с нарастающей задержкой
+  itemObserver=new IntersectionObserver((entries,obs)=>{
+    const vis=entries.filter(e=>e.isIntersecting)
+                     .sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
+    vis.forEach((en,k)=>{
+      en.target.style.animationDelay=(k*0.07).toFixed(2)+'s';
+      en.target.classList.add('in');
+      obs.unobserve(en.target);
+    });
+  },{root:scroller, threshold:0.06});
+
+  // запускаем наблюдение на следующем кадре, когда модалка уже отрисована
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    items.forEach(it=>itemObserver.observe(it));
+  }));
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('show');
+  if(itemObserver){itemObserver.disconnect();itemObserver=null;}
+}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+
+document.getElementById('search').addEventListener('input',render);
+document.getElementById('filters').addEventListener('click',e=>{
+  const chip=e.target.closest('.chip');if(!chip)return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');activeFilter=chip.dataset.f;
+  positionPill();render();
+});
+addEventListener('resize',()=>positionPill(true));
+
+/* ===== частицы, летящие вверх из нижнего GLOW ===== */
+(function(){
+  const c=document.getElementById('gp'); if(!c)return;
+  let s='';
+  for(let i=0;i<34;i++){
+    const left=(28+Math.random()*44).toFixed(1);      // около центра-низа
+    const dx=(Math.random()*160-80).toFixed(0);
+    const rise=-(62+Math.random()*46).toFixed(0);      // vh вверх
+    const d=(5.5+Math.random()*5).toFixed(2);
+    const delay=(Math.random()*7).toFixed(2);
+    const sz=(3+Math.random()*5).toFixed(1);
+    s+='<span class="rise-dot" style="left:'+left+'%;--dx:'+dx+'px;--rise:'+rise+'vh;--d:'+d+'s;--delay:'+delay+'s;width:'+sz+'px;height:'+sz+'px"></span>';
+  }
+  c.innerHTML=s;
+})();
+
+/* ===== стилизованный слайдер прокрутки модалки ===== */
+(function(){
+  const slider=document.getElementById('mSlider');
+  const thumb=document.getElementById('mThumb');
+  const scroller=document.querySelector('#modal .modal-scroll');
+  if(!slider||!thumb||!scroller)return;
+
+  function update(){
+    const sh=scroller.scrollHeight, ch=scroller.clientHeight, st=scroller.scrollTop;
+    const overflow=sh-ch;
+    if(overflow<=4){slider.classList.remove('on');return;}
+    slider.classList.add('on');
+    const trackH=slider.clientHeight;
+    const th=Math.max(40, trackH*ch/sh);
+    const maxTop=trackH-th;
+    const top=(st/overflow)*maxTop;
+    thumb.style.height=th+'px';
+    thumb.style.transform='translateY('+top+'px)';
+  }
+  window.modalSliderUpdate=update;
+  scroller.addEventListener('scroll',update,{passive:true});
+  addEventListener('resize',update);
+
+  let dragging=false,startY=0,startScroll=0;
+  thumb.addEventListener('pointerdown',e=>{
+    dragging=true;thumb.classList.add('drag');
+    try{thumb.setPointerCapture(e.pointerId);}catch(_){}
+    startY=e.clientY;startScroll=scroller.scrollTop;e.preventDefault();
+  });
+  thumb.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    const trackH=slider.clientHeight, th=thumb.offsetHeight;
+    const overflow=scroller.scrollHeight-scroller.clientHeight;
+    const maxTop=trackH-th;
+    const ratio=maxTop? (e.clientY-startY)/maxTop : 0;
+    scroller.scrollTop=startScroll+ratio*overflow;
+  });
+  function stop(){dragging=false;thumb.classList.remove('drag');}
+  thumb.addEventListener('pointerup',stop);
+  thumb.addEventListener('pointercancel',stop);
+  slider.addEventListener('pointerdown',e=>{
+    if(e.target===thumb)return;
+    const rect=slider.getBoundingClientRect(), th=thumb.offsetHeight;
+    const trackH=slider.clientHeight, maxTop=trackH-th;
+    const overflow=scroller.scrollHeight-scroller.clientHeight;
+    const ratio=Math.min(1,Math.max(0,(e.clientY-rect.top-th/2)/maxTop));
+    scroller.scrollTo({top:ratio*overflow,behavior:'smooth'});
+  });
+})();
+
+/* ===== оптимизированный фон: спрайт вместо shadowBlur ===== */
+const canvas=document.getElementById('fx'),ctx=canvas.getContext('2d');let parts=[];
+const sprite=document.createElement('canvas');sprite.width=sprite.height=48;
+(function(){const c=sprite.getContext('2d');const g=c.createRadialGradient(24,24,0,24,24,24);
+  g.addColorStop(0,'rgba(255,120,190,0.9)');g.addColorStop(.4,'rgba(255,31,143,0.32)');g.addColorStop(1,'rgba(255,31,143,0)');
+  c.fillStyle=g;c.fillRect(0,0,48,48);})();
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;parts=[];
+  const n=Math.min(26,Math.floor(innerWidth/48));
+  for(let i=0;i<n;i++)parts.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*9+5,s:Math.random()*0.35+0.1,a:Math.random()*0.35+0.12});
+}
+addEventListener('resize',resize);resize();
+let running=true;document.addEventListener('visibilitychange',()=>{running=!document.hidden;if(running)tick();});
+function tick(){if(!running)return;ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(const p of parts){ctx.globalAlpha=p.a;ctx.drawImage(sprite,p.x-p.r,p.y-p.r,p.r*2,p.r*2);
+    p.y-=p.s;if(p.y<-p.r){p.y=canvas.height+p.r;p.x=Math.random()*canvas.width;}}
+  ctx.globalAlpha=1;requestAnimationFrame(tick);}
+if(!matchMedia('(prefers-reduced-motion:reduce)').matches)tick();
+
+applyLang();
+window.addEventListener('load',()=>setTimeout(()=>positionPill(true),60));
+
+console.clear();
+console.log("%cАВТОРСКИЕ ПРАВА ЗАЩИЩЕНЫ. ВСЕ МАТЕРИАЛЫ САЙТА — ИНТЕЛЛЕКТУАЛЬНАЯ СОБСТВЕННОСТЬ RUSSIA RP. КОПИРОВАНИЕ БЕЗ РАЗРЕШЕНИЯ ЗАПРЕЩЕНО. COPYRIGHT 2026 RUSSIA RP.","color:#fff;background:#ff1f8f;font-size:18px;font-weight:900;padding:22px 30px;display:block;line-height:1.8;letter-spacing:1px;");
+</script>
+</body>
+</html>
