@@ -27,7 +27,6 @@ body::before{
 }
 #fx{position:fixed;inset:0;z-index:1;pointer-events:none}
 
-/* darkened flag background (default) + bright variant for hover */
 .flag-ru{background:linear-gradient(rgba(4,0,2,.78),rgba(26,2,14,.86)),linear-gradient(to bottom,#fff 0 33.33%,#0039a6 33.33% 66.66%,#d52b1e 66.66% 100%);transition:background .35s ease}
 .flag-uk{background:linear-gradient(rgba(4,0,2,.78),rgba(26,2,14,.86)),linear-gradient(to bottom,#0057b7 0 50%,#ffd700 50% 100%);transition:background .35s ease}
 
@@ -38,17 +37,12 @@ body::before{
 @keyframes cardIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 @keyframes dropIn{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
 @keyframes promptFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-
-/* ИНТРО */
 @keyframes coreIn{0%{opacity:0;transform:scale(.9)}100%{opacity:1;transform:scale(1)}}
 @keyframes ringIn{from{opacity:0}to{opacity:1}}
 @keyframes glowIn{from{opacity:0}to{opacity:1}}
 @keyframes btnRise{0%{opacity:0;transform:translateY(60px) scale(.92)}60%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes riseUp{0%{opacity:0;transform:translate(0,0) scale(.4)}12%{opacity:1}82%{opacity:.85}100%{opacity:0;transform:translate(var(--dx),var(--rise)) scale(1)}}
-
-/* появление подпунктов модалки */
 @keyframes itemReveal{0%{opacity:0;transform:translateY(30px) scale(.96)}100%{opacity:1;transform:none}}
-/* мягкое свечение рамки модалки */
 @keyframes haloPulse{0%,100%{box-shadow:0 30px 90px rgba(0,0,0,.6), 0 0 48px rgba(255,31,143,.4)}50%{box-shadow:0 30px 110px rgba(0,0,0,.6), 0 0 90px rgba(255,31,143,.65)}}
 
 /* ===== GATE / INTRO ===== */
@@ -57,25 +51,31 @@ body::before{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;padding:24px;
   background:radial-gradient(130% 100% at 50% 118%, #260420 0%, #0c0108 46%, #000 82%);
   transition:opacity .6s ease, transform .6s ease;
+  contain:strict;
 }
 #gate.hide{opacity:0;transform:scale(1.06)}
+/* кольца и частицы останавливаются когда гейт скрыт */
+#gate[style*="display: none"] .core-ring,
+#gate[style*="display: none"] .core-ring2,
+#gate[style*="display: none"] .rise-dot{
+  animation-play-state:paused;
+}
 
-/* один большой GLOW внизу страницы */
 .gate-glow-bottom{
   position:absolute;left:50%;bottom:-300px;width:1000px;max-width:160vw;height:620px;
   transform:translateX(-50%);border-radius:50%;pointer-events:none;z-index:0;opacity:0;filter:blur(24px);
   background:radial-gradient(circle at 50% 50%, rgba(255,31,143,.62) 0%, rgba(255,31,143,.24) 38%, transparent 70%);
+  will-change:opacity;
 }
-/* частицы, летящие вверх из GLOW */
 .gate-rise{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
 .rise-dot{
   position:absolute;bottom:-12px;width:6px;height:6px;border-radius:50%;
   background:var(--pink-soft);box-shadow:0 0 10px 2px var(--pink-glow);opacity:0;
   animation:riseUp var(--d) linear var(--delay) infinite;
+  will-change:transform,opacity;
 }
 
-/* ЯДРО: лого + вращающиеся кольца */
-.gate-core{position:relative;z-index:3;width:230px;height:230px;display:grid;place-items:center;opacity:0}
+.gate-core{position:relative;z-index:3;width:230px;height:230px;display:grid;place-items:center;opacity:0;will-change:opacity,transform}
 .core-ring{
   position:absolute;inset:-6px;border-radius:50%;pointer-events:none;opacity:0;
   background:conic-gradient(from 0deg, transparent 0deg, var(--pink) 60deg, var(--pink-soft) 130deg, transparent 200deg, transparent 360deg);
@@ -83,6 +83,7 @@ body::before{
   mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
   filter:drop-shadow(0 0 8px var(--pink-glow));
   animation:rotate 4.5s linear infinite;
+  will-change:transform;
 }
 .core-ring2{
   inset:-26px;
@@ -90,6 +91,7 @@ body::before{
   -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
   mask:radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
   animation:rotateRev 7s linear infinite;
+  will-change:transform;
 }
 .gate-logo{position:relative;z-index:5;width:172px;filter:drop-shadow(0 0 34px var(--pink-glow))}
 
@@ -101,10 +103,11 @@ body::before{
   position:relative;isolation:isolate;cursor:pointer;overflow:hidden;opacity:0;
   display:flex;align-items:center;gap:16px;width:300px;max-width:86vw;padding:17px 20px;border-radius:20px;
   background:linear-gradient(135deg, rgba(255,31,143,.10), rgba(10,2,7,.74));
-  backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
+  backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);
   border:1px solid var(--line);color:#fff;text-align:left;font-family:'Manrope',sans-serif;
   box-shadow:0 16px 44px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08);
   transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s, border-color .4s;
+  will-change:transform;
 }
 .lang-btn>*{position:relative;z-index:2}
 .lb-flag{width:48px;height:48px;border-radius:13px;flex:none;box-shadow:0 6px 18px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.2)}
@@ -114,14 +117,13 @@ body::before{
 .lb-name{font-family:'Unbounded',sans-serif;font-weight:800;font-size:1.22rem;letter-spacing:.4px}
 .lb-sub{font-size:.68rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink-dim);margin-top:5px;font-weight:700}
 .lb-arrow{width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;font-size:.95rem;background:rgba(255,31,143,.12);border:1px solid var(--line);color:var(--pink);transition:transform .35s, background .35s, color .35s}
-/* блик-проводка */
 .lang-btn::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.16) 50%, transparent 65%);transform:translateX(-130%);transition:transform 1s cubic-bezier(.2,.8,.2,1)}
 .lang-btn:hover{transform:translateY(-6px);border-color:var(--pink);box-shadow:0 26px 62px rgba(255,31,143,.4)}
 .lang-btn:hover::after{transform:translateX(130%)}
 .lang-btn:hover .lb-arrow{transform:translateX(5px);background:var(--pink);color:#000}
 .lang-btn:active{transform:translateY(-2px) scale(.99)}
 
-/* INTRO TIMELINE: всё проявляется плавно и по очереди */
+/* INTRO TIMELINE */
 #gate.anim .gate-glow-bottom{animation:glowIn 1.4s ease .1s both}
 #gate.anim .gate-core{animation:coreIn 1.2s cubic-bezier(.2,.7,.3,1) .35s both}
 #gate.anim .core-ring{animation:rotate 4.5s linear infinite, ringIn 1.2s ease .8s both}
@@ -136,9 +138,10 @@ body::before{
   position:fixed;top:14px;left:16px;right:16px;z-index:200;display:flex;align-items:center;gap:18px;
   padding:11px 20px;border-radius:20px;animation:dropIn .6s both;
   background:linear-gradient(135deg, rgba(255,31,143,.10), rgba(10,2,7,.7));
-  backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+  backdrop-filter:blur(10px) saturate(130%);-webkit-backdrop-filter:blur(10px) saturate(130%);
   border:1px solid var(--line);
   box-shadow:0 16px 44px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.10);
+  will-change:transform;
 }
 .tb-logo{height:44px;object-fit:contain;filter:drop-shadow(0 0 16px var(--pink-glow))}
 .tb-spacer{flex:1}
@@ -165,7 +168,7 @@ body::before{
 }
 .lang-switch:hover::before{opacity:1;animation-play-state:running}
 
-/* ===== CONTROLS — NOT sticky anymore (fixes "glued to header") ===== */
+/* ===== CONTROLS ===== */
 .controls{position:relative;z-index:50;max-width:1240px;margin:108px auto 0;padding:0 20px}
 .controls-inner{
   display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:14px;border-radius:22px;
@@ -178,7 +181,7 @@ body::before{
 .search input::placeholder{color:var(--ink-dim)}
 .search input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,31,143,.2)}
 
-/* ===== FILTER CHIPS with sliding pill ===== */
+/* ===== FILTER CHIPS ===== */
 .filters{position:relative;display:flex;gap:8px;padding:3px;border-radius:16px}
 .chip-pill{
   position:absolute;top:3px;left:0;height:calc(100% - 6px);border-radius:13px;z-index:0;
@@ -198,12 +201,15 @@ body::before{
 .chip.active{color:#000;border-color:transparent}
 
 /* ===== GRID ===== */
-.rules-grid{max-width:1240px;margin:18px auto 90px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(320px,1fr));gap:18px}
+.rules-grid{max-width:1240px;margin:18px auto 90px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(320px,1fr));gap:18px;contain:layout}
 .rule-btn{
   position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;gap:18px;padding:20px 24px;min-height:100px;
   border-radius:20px;background:linear-gradient(135deg, rgba(40,6,22,.9), rgba(12,2,8,.92));border:1px solid var(--line);
   box-shadow:0 10px 30px rgba(0,0,0,.5);animation:cardIn .45s both;
   transition:transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .3s;
+  will-change:transform;
+  content-visibility:auto;
+  contain-intrinsic-size:0 100px;
 }
 .rule-btn::after{content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,31,143,.22),transparent);transform:skewX(-20deg);transition:left .55s}
 .rule-btn:hover{transform:translateY(-6px);border-color:var(--pink);box-shadow:0 20px 54px rgba(255,31,143,.3)}
@@ -216,10 +222,10 @@ body::before{
 .modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.88);justify-content:center;align-items:center;padding:20px;opacity:0;transition:opacity .3s}
 .modal.show{display:flex;opacity:1}
 
-/* рамка: вращающийся градиент по кругу — без @property, работает везде */
 .modal-frame{
   position:relative;width:100%;max-width:920px;max-height:88vh;border-radius:32px;overflow:hidden;padding:4px;
   animation:cardIn .4s cubic-bezier(.2,.9,.25,1), haloPulse 3.5s ease-in-out .4s infinite;
+  will-change:box-shadow;
 }
 .modal-frame::before{
   content:'';position:absolute;inset:-100%;z-index:0;pointer-events:none;
@@ -227,6 +233,7 @@ body::before{
     #ff1f8f 0deg, #fff0f7 40deg, #ff79bd 80deg, #ff1f8f 140deg, #2a0014 200deg,
     #ff4f9e 250deg, #ffd0e6 300deg, #ff1f8f 360deg);
   animation:rotate 3s linear infinite;
+  will-change:transform;
 }
 .modal-content{position:relative;z-index:1;width:100%;max-height:calc(88vh - 8px);border-radius:28px;background:#0b0207;overflow:hidden}
 .modal-scroll{position:relative;z-index:1;max-height:calc(88vh - 8px);overflow-y:auto;padding:38px 44px 38px 34px;border-radius:inherit}
@@ -235,7 +242,7 @@ body::before{
 .modal h2{font-family:'Unbounded',sans-serif;font-weight:800;font-size:1.9rem;text-align:center;margin-bottom:28px;padding:0 30px;background:linear-gradient(92deg,#fff,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 50px var(--pink-glow)}
 .map-img{width:100%;border-radius:18px;margin-bottom:24px;box-shadow:0 12px 40px rgba(0,0,0,.55)}
 
-/* ===== СТИЛИЗОВАННЫЙ СЛАЙДЕР ПРОКРУТКИ ===== */
+/* ===== СЛАЙДЕР ПРОКРУТКИ ===== */
 .modal-slider{position:absolute;top:20px;right:11px;bottom:20px;width:8px;z-index:5;display:none;touch-action:none}
 .modal-slider.on{display:block}
 .ms-track{position:absolute;inset:0;border-radius:8px;background:rgba(255,31,143,.10);box-shadow:inset 0 0 0 1px rgba(255,31,143,.2)}
@@ -244,6 +251,7 @@ body::before{
   background:linear-gradient(180deg,#ff5ea8,var(--pink) 50%,#ff79bd);
   box-shadow:0 0 14px var(--pink-glow), inset 0 0 0 1px rgba(255,255,255,.35);
   transition:box-shadow .2s, filter .2s;
+  will-change:transform;
 }
 .ms-thumb::before{content:'';position:absolute;left:50%;top:50%;width:3px;height:16px;border-radius:3px;transform:translate(-50%,-50%);background:rgba(255,255,255,.55);box-shadow:-4px 0 0 rgba(255,255,255,.45),4px 0 0 rgba(255,255,255,.45)}
 .ms-thumb:hover{filter:brightness(1.12)}
@@ -260,6 +268,7 @@ body::before{
   box-shadow:0 10px 28px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.025);
   opacity:0;
   transition:transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, border-color .3s ease;
+  will-change:transform,opacity;
 }
 .item.in{opacity:1;animation:itemReveal .6s cubic-bezier(.2,.85,.25,1) backwards}
 .item::before{
@@ -268,6 +277,7 @@ body::before{
   -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;
   opacity:.9;animation:spin 7s linear infinite;
+  will-change:--bd;
 }
 .item::after{
   content:'';position:absolute;inset:1px;border-radius:15px;z-index:-1;pointer-events:none;
@@ -288,6 +298,7 @@ body::before{
 footer{position:relative;z-index:10;text-align:center;padding:24px 20px 50px;color:var(--ink-dim);font-size:.82rem;letter-spacing:1.5px}
 footer b{color:var(--pink)}
 
+/* ===== МОБИЛКИ ===== */
 @media (max-width:680px){
   .rule-btn{gap:14px;padding:16px 18px;min-height:86px}
   .rule-btn .num{min-width:48px;height:48px;font-size:1.25rem}
@@ -298,7 +309,13 @@ footer b{color:var(--pink)}
   .gate-logo{width:112px}
   .lang-btn{width:280px;padding:15px 18px}
   .lb-name{font-size:1.1rem}
+  /* на мобилах снижаем blur — главная причина лагов */
+  .topbar{backdrop-filter:blur(6px) saturate(120%);-webkit-backdrop-filter:blur(6px) saturate(120%)}
+  .lang-btn{backdrop-filter:blur(6px) saturate(120%);-webkit-backdrop-filter:blur(6px) saturate(120%)}
+  /* уменьшаем кол-во частиц через CSS — JS сам ограничивает через медиа */
+  .rise-dot:nth-child(n+18){display:none}
 }
+
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
   .gate-core,.gate-prompt,.lang-btn,.gate-glow-bottom,.core-ring{opacity:1!important;transform:none!important}
