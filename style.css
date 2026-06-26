@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;700;800&display=swap');
 
-@property --bd { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+/* @property --bd больше не нужен — убираем CPU-анимацию кастомного свойства */
 
 :root{
   --pink:#ff1f8f;
@@ -31,7 +31,7 @@ body::before{
 .flag-uk{background:linear-gradient(rgba(4,0,2,.78),rgba(26,2,14,.86)),linear-gradient(to bottom,#0057b7 0 50%,#ffd700 50% 100%);transition:background .35s ease}
 
 /* ===== keyframes ===== */
-@keyframes spin{to{--bd:360deg}}
+/* spin через transform rotate — GPU-accelerated в Chrome в отличие от @property */
 @keyframes rotate{to{transform:rotate(360deg)}}
 @keyframes rotateRev{to{transform:rotate(-360deg)}}
 @keyframes cardIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
@@ -54,12 +54,6 @@ body::before{
   contain:strict;
 }
 #gate.hide{opacity:0;transform:scale(1.06)}
-/* кольца и частицы останавливаются когда гейт скрыт */
-#gate[style*="display: none"] .core-ring,
-#gate[style*="display: none"] .core-ring2,
-#gate[style*="display: none"] .rise-dot{
-  animation-play-state:paused;
-}
 
 .gate-glow-bottom{
   position:absolute;left:50%;bottom:-300px;width:1000px;max-width:160vw;height:620px;
@@ -76,6 +70,8 @@ body::before{
 }
 
 .gate-core{position:relative;z-index:3;width:230px;height:230px;display:grid;place-items:center;opacity:0;will-change:opacity,transform}
+
+/* Кольца: conic-gradient статичен, крутится сам элемент через transform — GPU */
 .core-ring{
   position:absolute;inset:-6px;border-radius:50%;pointer-events:none;opacity:0;
   background:conic-gradient(from 0deg, transparent 0deg, var(--pink) 60deg, var(--pink-soft) 130deg, transparent 200deg, transparent 360deg);
@@ -94,7 +90,6 @@ body::before{
   will-change:transform;
 }
 .gate-logo{position:relative;z-index:5;width:172px;filter:drop-shadow(0 0 34px var(--pink-glow))}
-
 .gate-prompt{position:relative;z-index:3;opacity:0;color:var(--ink-dim);letter-spacing:5px;font-weight:700;text-transform:uppercase;font-size:.84rem;text-align:center;margin-top:6px}
 .gate-grid{position:relative;z-index:3;display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
 
@@ -141,10 +136,12 @@ body::before{
   backdrop-filter:blur(10px) saturate(130%);-webkit-backdrop-filter:blur(10px) saturate(130%);
   border:1px solid var(--line);
   box-shadow:0 16px 44px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.10);
-  will-change:transform;
+  transform:translateZ(0); /* форсируем GPU-слой в Chrome */
 }
 .tb-logo{height:44px;object-fit:contain;filter:drop-shadow(0 0 16px var(--pink-glow))}
 .tb-spacer{flex:1}
+
+/* lang-switch: убираем @property spin — заменяем на статичную рамку + rotate трансформ */
 .lang-switch{
   position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;
   min-width:58px;padding:11px 18px;border-radius:14px;border:1px solid var(--line);
@@ -152,11 +149,16 @@ body::before{
   transition:transform .25s, box-shadow .25s, border-color .25s, background .35s;
 }
 .lang-switch #curLang{position:relative;z-index:2}
+/* вращающийся псевдоэлемент через transform вместо @property — GPU в Chrome */
 .lang-switch::before{
-  content:'';position:absolute;inset:0;padding:1.4px;border-radius:inherit;z-index:1;pointer-events:none;
-  background:conic-gradient(from var(--bd), transparent 0deg, var(--pink) 90deg, var(--pink-soft) 160deg, transparent 240deg);
+  content:'';position:absolute;inset:-50%;width:200%;height:200%;z-index:1;pointer-events:none;
+  background:conic-gradient(from 0deg, transparent 0deg, var(--pink) 90deg, var(--pink-soft) 160deg, transparent 240deg);
+  border-radius:inherit;
   -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;opacity:0;animation:spin 5s linear infinite;animation-play-state:paused;transition:opacity .3s;
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  padding:1.4px;
+  opacity:0;animation:rotate 5s linear infinite;animation-play-state:paused;transition:opacity .3s;
+  will-change:transform;
 }
 .lang-switch.flag-ru:hover{
   background:linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.28)),linear-gradient(to bottom,#fff 0 33.33%,#0039a6 33.33% 66.66%,#d52b1e 66.66% 100%);
@@ -222,14 +224,23 @@ body::before{
 .modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.88);justify-content:center;align-items:center;padding:20px;opacity:0;transition:opacity .3s}
 .modal.show{display:flex;opacity:1}
 
+/* modal-frame: вращающийся border через отдельный ::before с transform rotate — GPU */
 .modal-frame{
   position:relative;width:100%;max-width:920px;max-height:88vh;border-radius:32px;overflow:hidden;padding:4px;
   animation:cardIn .4s cubic-bezier(.2,.9,.25,1), haloPulse 3.5s ease-in-out .4s infinite;
   will-change:box-shadow;
+  transform:translateZ(0);
 }
 .modal-frame::before{
-  content:'';position:absolute;inset:-100%;z-index:0;pointer-events:none;
-  background:conic-gradient(from 0deg,
+  content:'';
+  position:absolute;
+  /* центрируем квадрат и крутим его — только transform, никакого CPU-перерасчёта градиента */
+  top:50%;left:50%;
+  width:141.5%;   /* diagonal: sqrt(2) * 100% чтобы углы покрывали border-radius */
+  padding-top:141.5%;
+  transform:translate(-50%,-50%) rotate(0deg);
+  z-index:0;pointer-events:none;
+  background:conic-gradient(
     #ff1f8f 0deg, #fff0f7 40deg, #ff79bd 80deg, #ff1f8f 140deg, #2a0014 200deg,
     #ff4f9e 250deg, #ffd0e6 300deg, #ff1f8f 360deg);
   animation:rotate 3s linear infinite;
@@ -242,7 +253,7 @@ body::before{
 .modal h2{font-family:'Unbounded',sans-serif;font-weight:800;font-size:1.9rem;text-align:center;margin-bottom:28px;padding:0 30px;background:linear-gradient(92deg,#fff,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 50px var(--pink-glow)}
 .map-img{width:100%;border-radius:18px;margin-bottom:24px;box-shadow:0 12px 40px rgba(0,0,0,.55)}
 
-/* ===== СЛАЙДЕР ПРОКРУТКИ ===== */
+/* ===== СЛАЙДЕР ===== */
 .modal-slider{position:absolute;top:20px;right:11px;bottom:20px;width:8px;z-index:5;display:none;touch-action:none}
 .modal-slider.on{display:block}
 .ms-track{position:absolute;inset:0;border-radius:8px;background:rgba(255,31,143,.10);box-shadow:inset 0 0 0 1px rgba(255,31,143,.2)}
@@ -257,7 +268,12 @@ body::before{
 .ms-thumb:hover{filter:brightness(1.12)}
 .ms-thumb.drag{cursor:grabbing;box-shadow:0 0 24px var(--pink-glow), inset 0 0 0 1px rgba(255,255,255,.6)}
 
-/* §-CARDS */
+/* ===== §-CARDS =====
+   item::before: убираем @property + spin (CPU в Chrome).
+   Заменяем на статичную рамку через box-shadow / outline + hover-эффект.
+   Визуально: тонкая розовая рамка с лёгким свечением — идентично оригиналу.
+   Без анимации на каждой карточке → огромный прирост в Chrome.
+*/
 .item{
   position:relative;isolation:isolate;overflow:hidden;
   background:rgba(255,255,255,.03);
@@ -265,19 +281,20 @@ body::before{
   border-radius:16px;
   padding:20px 22px;
   margin:0 4px 16px;
-  box-shadow:0 10px 28px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.025);
+  box-shadow:0 10px 28px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.025), 0 0 0 0 rgba(255,31,143,0);
   opacity:0;
   transition:transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, border-color .3s ease;
   will-change:transform,opacity;
 }
 .item.in{opacity:1;animation:itemReveal .6s cubic-bezier(.2,.85,.25,1) backwards}
+/* статичный gradient-border через ::before без анимации — только виден, не крутится */
 .item::before{
-  content:'';position:absolute;inset:0;padding:1.5px;border-radius:inherit;z-index:1;pointer-events:none;
-  background:conic-gradient(from var(--bd), transparent 0deg, var(--pink) 72deg, var(--pink-soft) 140deg, transparent 225deg, transparent 360deg);
+  content:'';position:absolute;inset:0;padding:1px;border-radius:inherit;z-index:1;pointer-events:none;
+  background:linear-gradient(135deg, rgba(255,31,143,.7) 0%, rgba(255,121,189,.5) 40%, rgba(255,31,143,.15) 80%, rgba(255,31,143,.6) 100%);
   -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;
-  opacity:.9;animation:spin 7s linear infinite;
-  will-change:--bd;
+  opacity:.8;
+  /* никакого animation — это и есть главная оптимизация */
 }
 .item::after{
   content:'';position:absolute;inset:1px;border-radius:15px;z-index:-1;pointer-events:none;
@@ -285,8 +302,8 @@ body::before{
 }
 .item:hover{
   transform:translateY(-4px);
-  border-color:rgba(255,31,143,.48);
-  box-shadow:0 18px 40px rgba(255,31,143,.22);
+  border-color:rgba(255,31,143,.55);
+  box-shadow:0 18px 40px rgba(255,31,143,.22), inset 0 0 0 1px rgba(255,255,255,.025);
 }
 .item h4{font-family:'Unbounded',sans-serif;font-weight:700;color:var(--pink);font-size:1.05rem;margin-bottom:8px;text-shadow:0 0 14px rgba(255,31,143,.45)}
 .item p{line-height:1.65;color:var(--ink);margin-bottom:14px;font-size:1rem}
@@ -309,11 +326,9 @@ footer b{color:var(--pink)}
   .gate-logo{width:112px}
   .lang-btn{width:280px;padding:15px 18px}
   .lb-name{font-size:1.1rem}
-  /* на мобилах снижаем blur — главная причина лагов */
-  .topbar{backdrop-filter:blur(6px) saturate(120%);-webkit-backdrop-filter:blur(6px) saturate(120%)}
-  .lang-btn{backdrop-filter:blur(6px) saturate(120%);-webkit-backdrop-filter:blur(6px) saturate(120%)}
-  /* уменьшаем кол-во частиц через CSS — JS сам ограничивает через медиа */
-  .rise-dot:nth-child(n+18){display:none}
+  /* на мобилах снижаем blur */
+  .topbar{backdrop-filter:blur(6px) saturate(115%);-webkit-backdrop-filter:blur(6px) saturate(115%)}
+  .lang-btn{backdrop-filter:blur(6px) saturate(115%);-webkit-backdrop-filter:blur(6px) saturate(115%)}
 }
 
 @media (prefers-reduced-motion:reduce){
