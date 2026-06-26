@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;700;800&display=swap');
 
-/* @property --bd больше не нужен — убираем CPU-анимацию кастомного свойства */
-
 :root{
   --pink:#ff1f8f;
   --pink-soft:#ff79bd;
@@ -18,6 +16,9 @@
 ::-webkit-scrollbar{width:0;height:0}
 html,body{scrollbar-width:none;-ms-overflow-style:none}
 body{min-height:100%;background:var(--bg);color:var(--ink);font-family:'Manrope',sans-serif;overflow-x:hidden;position:relative}
+
+/* фон + статичные «частицы» через radial-gradient — заменяет canvas полностью.
+   На GPU, не рисуется каждый кадр, выглядит почти как живые частицы. */
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
@@ -25,13 +26,26 @@ body::before{
     radial-gradient(50% 50% at 90% 18%, rgba(255,31,143,.10), transparent 60%),
     radial-gradient(70% 60% at 50% 112%, rgba(255,31,143,.14), transparent 65%);
 }
-#fx{position:fixed;inset:0;z-index:1;pointer-events:none}
+body::after{
+  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.55;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(255,121,189,.7) 0, transparent 8px),
+    radial-gradient(circle at 78% 32%, rgba(255,121,189,.55) 0, transparent 10px),
+    radial-gradient(circle at 34% 67%, rgba(255,31,143,.55) 0, transparent 9px),
+    radial-gradient(circle at 88% 78%, rgba(255,121,189,.5) 0, transparent 7px),
+    radial-gradient(circle at 22% 88%, rgba(255,31,143,.45) 0, transparent 8px),
+    radial-gradient(circle at 62% 12%, rgba(255,121,189,.4) 0, transparent 7px),
+    radial-gradient(circle at 48% 45%, rgba(255,31,143,.4) 0, transparent 6px),
+    radial-gradient(circle at 95% 55%, rgba(255,121,189,.35) 0, transparent 8px);
+}
+
+/* canvas больше не виден, но оставлен на случай совместимости — JS его выключает */
+#fx{display:none}
 
 .flag-ru{background:linear-gradient(rgba(4,0,2,.78),rgba(26,2,14,.86)),linear-gradient(to bottom,#fff 0 33.33%,#0039a6 33.33% 66.66%,#d52b1e 66.66% 100%);transition:background .35s ease}
 .flag-uk{background:linear-gradient(rgba(4,0,2,.78),rgba(26,2,14,.86)),linear-gradient(to bottom,#0057b7 0 50%,#ffd700 50% 100%);transition:background .35s ease}
 
 /* ===== keyframes ===== */
-/* spin через transform rotate — GPU-accelerated в Chrome в отличие от @property */
 @keyframes rotate{to{transform:rotate(360deg)}}
 @keyframes rotateRev{to{transform:rotate(-360deg)}}
 @keyframes cardIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
@@ -41,11 +55,11 @@ body::before{
 @keyframes ringIn{from{opacity:0}to{opacity:1}}
 @keyframes glowIn{from{opacity:0}to{opacity:1}}
 @keyframes btnRise{0%{opacity:0;transform:translateY(60px) scale(.92)}60%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes riseUp{0%{opacity:0;transform:translate(0,0) scale(.4)}12%{opacity:1}82%{opacity:.85}100%{opacity:0;transform:translate(var(--dx),var(--rise)) scale(1)}}
 @keyframes itemReveal{0%{opacity:0;transform:translateY(30px) scale(.96)}100%{opacity:1;transform:none}}
-@keyframes haloPulse{0%,100%{box-shadow:0 30px 90px rgba(0,0,0,.6), 0 0 48px rgba(255,31,143,.4)}50%{box-shadow:0 30px 110px rgba(0,0,0,.6), 0 0 90px rgba(255,31,143,.65)}}
 
-/* ===== GATE / INTRO ===== */
+/* ===== GATE / INTRO =====
+   гейт показывается ~1 раз и закрывается — анимации тут OK, но
+   когда он скрыт, ВСЁ должно остановиться. */
 #gate{
   position:fixed;inset:0;z-index:2000;overflow:hidden;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;padding:24px;
@@ -59,50 +73,53 @@ body::before{
   position:absolute;left:50%;bottom:-300px;width:1000px;max-width:160vw;height:620px;
   transform:translateX(-50%);border-radius:50%;pointer-events:none;z-index:0;opacity:0;filter:blur(24px);
   background:radial-gradient(circle at 50% 50%, rgba(255,31,143,.62) 0%, rgba(255,31,143,.24) 38%, transparent 70%);
-  will-change:opacity;
 }
 .gate-rise{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
 .rise-dot{
   position:absolute;bottom:-12px;width:6px;height:6px;border-radius:50%;
-  background:var(--pink-soft);box-shadow:0 0 10px 2px var(--pink-glow);opacity:0;
-  animation:riseUp var(--d) linear var(--delay) infinite;
-  will-change:transform,opacity;
+  background:var(--pink-soft);box-shadow:0 0 8px 2px var(--pink-glow);opacity:0;
+  /* частицы крутятся ТОЛЬКО когда у #gate есть .anim — JS управляет */
 }
+#gate.anim .rise-dot{animation:riseUp var(--d) linear var(--delay) infinite}
+@keyframes riseUp{0%{opacity:0;transform:translate(0,0) scale(.4)}12%{opacity:1}82%{opacity:.85}100%{opacity:0;transform:translate(var(--dx),var(--rise)) scale(1)}}
 
-.gate-core{position:relative;z-index:3;width:230px;height:230px;display:grid;place-items:center;opacity:0;will-change:opacity,transform}
-
-/* Кольца: conic-gradient статичен, крутится сам элемент через transform — GPU */
+.gate-core{position:relative;z-index:3;width:230px;height:230px;display:grid;place-items:center;opacity:0}
 .core-ring{
   position:absolute;inset:-6px;border-radius:50%;pointer-events:none;opacity:0;
   background:conic-gradient(from 0deg, transparent 0deg, var(--pink) 60deg, var(--pink-soft) 130deg, transparent 200deg, transparent 360deg);
   -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
   mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
   filter:drop-shadow(0 0 8px var(--pink-glow));
-  animation:rotate 4.5s linear infinite;
-  will-change:transform;
 }
 .core-ring2{
   inset:-26px;
   background:conic-gradient(from 120deg, transparent 0deg, var(--pink-soft) 50deg, transparent 130deg, transparent 360deg);
   -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
   mask:radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-  animation:rotateRev 7s linear infinite;
-  will-change:transform;
 }
 .gate-logo{position:relative;z-index:5;width:172px;filter:drop-shadow(0 0 34px var(--pink-glow))}
 .gate-prompt{position:relative;z-index:3;opacity:0;color:var(--ink-dim);letter-spacing:5px;font-weight:700;text-transform:uppercase;font-size:.84rem;text-align:center;margin-top:6px}
 .gate-grid{position:relative;z-index:3;display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+
+/* INTRO TIMELINE — анимации только при наличии .anim, без .anim всё статично */
+#gate.anim .gate-glow-bottom{animation:glowIn 1.4s ease .1s both}
+#gate.anim .gate-core{animation:coreIn 1.2s cubic-bezier(.2,.7,.3,1) .35s both}
+#gate.anim .core-ring{animation:rotate 4.5s linear infinite, ringIn 1.2s ease .8s both;will-change:transform}
+#gate.anim .core-ring2{animation:rotateRev 7s linear infinite, ringIn 1.2s ease 1s both;will-change:transform}
+#gate.anim .gate-prompt{animation:promptFade .7s ease 1.3s both}
+#gate.anim .lang-btn{animation:btnRise .75s cubic-bezier(.2,.9,.25,1) both}
+#gate.anim .lang-btn:nth-child(1){animation-delay:1.55s}
+#gate.anim .lang-btn:nth-child(2){animation-delay:1.7s}
 
 /* ===== КНОПКИ ЯЗЫКА ===== */
 .lang-btn{
   position:relative;isolation:isolate;cursor:pointer;overflow:hidden;opacity:0;
   display:flex;align-items:center;gap:16px;width:300px;max-width:86vw;padding:17px 20px;border-radius:20px;
   background:linear-gradient(135deg, rgba(255,31,143,.10), rgba(10,2,7,.74));
-  backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);
+  backdrop-filter:blur(10px) saturate(130%);-webkit-backdrop-filter:blur(10px) saturate(130%);
   border:1px solid var(--line);color:#fff;text-align:left;font-family:'Manrope',sans-serif;
   box-shadow:0 16px 44px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08);
   transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s, border-color .4s;
-  will-change:transform;
 }
 .lang-btn>*{position:relative;z-index:2}
 .lb-flag{width:48px;height:48px;border-radius:13px;flex:none;box-shadow:0 6px 18px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.2)}
@@ -118,48 +135,26 @@ body::before{
 .lang-btn:hover .lb-arrow{transform:translateX(5px);background:var(--pink);color:#000}
 .lang-btn:active{transform:translateY(-2px) scale(.99)}
 
-/* INTRO TIMELINE */
-#gate.anim .gate-glow-bottom{animation:glowIn 1.4s ease .1s both}
-#gate.anim .gate-core{animation:coreIn 1.2s cubic-bezier(.2,.7,.3,1) .35s both}
-#gate.anim .core-ring{animation:rotate 4.5s linear infinite, ringIn 1.2s ease .8s both}
-#gate.anim .core-ring2{animation:rotateRev 7s linear infinite, ringIn 1.2s ease 1s both}
-#gate.anim .gate-prompt{animation:promptFade .7s ease 1.3s both}
-#gate.anim .lang-btn{animation:btnRise .75s cubic-bezier(.2,.9,.25,1) both}
-#gate.anim .lang-btn:nth-child(1){animation-delay:1.55s}
-#gate.anim .lang-btn:nth-child(2){animation-delay:1.7s}
-
 /* ===== HEADER ===== */
 .topbar{
   position:fixed;top:14px;left:16px;right:16px;z-index:200;display:flex;align-items:center;gap:18px;
   padding:11px 20px;border-radius:20px;animation:dropIn .6s both;
-  background:linear-gradient(135deg, rgba(255,31,143,.10), rgba(10,2,7,.7));
-  backdrop-filter:blur(10px) saturate(130%);-webkit-backdrop-filter:blur(10px) saturate(130%);
+  background:linear-gradient(135deg, rgba(35,4,20,.85), rgba(10,2,7,.9));
+  /* backdrop-filter ПОЛНОСТЬЮ УБРАН — он жёстко грел GPU в Chrome.
+     Вместо него непрозрачный градиент — внешне почти не отличить на тёмном фоне */
   border:1px solid var(--line);
   box-shadow:0 16px 44px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.10);
-  transform:translateZ(0); /* форсируем GPU-слой в Chrome */
 }
 .tb-logo{height:44px;object-fit:contain;filter:drop-shadow(0 0 16px var(--pink-glow))}
 .tb-spacer{flex:1}
 
-/* lang-switch: убираем @property spin — заменяем на статичную рамку + rotate трансформ */
 .lang-switch{
-  position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;
   min-width:58px;padding:11px 18px;border-radius:14px;border:1px solid var(--line);
   font-family:'Unbounded',sans-serif;font-weight:800;letter-spacing:1px;color:#fff;text-shadow:0 0 12px var(--pink-glow);
   transition:transform .25s, box-shadow .25s, border-color .25s, background .35s;
 }
 .lang-switch #curLang{position:relative;z-index:2}
-/* вращающийся псевдоэлемент через transform вместо @property — GPU в Chrome */
-.lang-switch::before{
-  content:'';position:absolute;inset:-50%;width:200%;height:200%;z-index:1;pointer-events:none;
-  background:conic-gradient(from 0deg, transparent 0deg, var(--pink) 90deg, var(--pink-soft) 160deg, transparent 240deg);
-  border-radius:inherit;
-  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  padding:1.4px;
-  opacity:0;animation:rotate 5s linear infinite;animation-play-state:paused;transition:opacity .3s;
-  will-change:transform;
-}
 .lang-switch.flag-ru:hover{
   background:linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.28)),linear-gradient(to bottom,#fff 0 33.33%,#0039a6 33.33% 66.66%,#d52b1e 66.66% 100%);
   transform:translateY(-2px);box-shadow:0 0 26px rgba(213,43,30,.45);border-color:#fff;
@@ -168,7 +163,6 @@ body::before{
   background:linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.25)),linear-gradient(to bottom,#0057b7 0 50%,#ffd700 50% 100%);
   transform:translateY(-2px);box-shadow:0 0 26px rgba(0,87,183,.5);border-color:#ffd700;
 }
-.lang-switch:hover::before{opacity:1;animation-play-state:running}
 
 /* ===== CONTROLS ===== */
 .controls{position:relative;z-index:50;max-width:1240px;margin:108px auto 0;padding:0 20px}
@@ -183,7 +177,6 @@ body::before{
 .search input::placeholder{color:var(--ink-dim)}
 .search input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,31,143,.2)}
 
-/* ===== FILTER CHIPS ===== */
 .filters{position:relative;display:flex;gap:8px;padding:3px;border-radius:16px}
 .chip-pill{
   position:absolute;top:3px;left:0;height:calc(100% - 6px);border-radius:13px;z-index:0;
@@ -191,7 +184,6 @@ body::before{
   box-shadow:0 0 24px var(--pink-glow);
   transform:translateX(0);width:0;
   transition:transform .45s cubic-bezier(.4,.0,.2,1), width .45s cubic-bezier(.4,.0,.2,1);
-  will-change:transform,width;
 }
 .chip{
   position:relative;z-index:1;padding:11px 18px;border-radius:13px;cursor:pointer;
@@ -209,7 +201,6 @@ body::before{
   border-radius:20px;background:linear-gradient(135deg, rgba(40,6,22,.9), rgba(12,2,8,.92));border:1px solid var(--line);
   box-shadow:0 10px 30px rgba(0,0,0,.5);animation:cardIn .45s both;
   transition:transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .3s;
-  will-change:transform;
   content-visibility:auto;
   contain-intrinsic-size:0 100px;
 }
@@ -220,40 +211,26 @@ body::before{
 .rule-btn .ico{font-size:1.7rem;color:var(--pink-soft);width:34px;text-align:center}
 .rule-btn .ttl{flex:1;font-family:'Unbounded',sans-serif;font-weight:600;font-size:1.1rem;letter-spacing:.4px;line-height:1.3}
 
-/* ===== MODAL ===== */
+/* ===== MODAL =====
+   УБРАНО: вращающаяся conic-gradient рамка (грела GPU).
+   УБРАНО: haloPulse (бесконечный box-shadow animation).
+   ЗАМЕНЕНО на: статичная розовая рамка с большим box-shadow — выглядит почти идентично. */
 .modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.88);justify-content:center;align-items:center;padding:20px;opacity:0;transition:opacity .3s}
 .modal.show{display:flex;opacity:1}
 
-/* modal-frame: вращающийся border через отдельный ::before с transform rotate — GPU */
 .modal-frame{
-  position:relative;width:100%;max-width:920px;max-height:88vh;border-radius:32px;overflow:hidden;padding:4px;
-  animation:cardIn .4s cubic-bezier(.2,.9,.25,1), haloPulse 3.5s ease-in-out .4s infinite;
-  will-change:box-shadow;
-  transform:translateZ(0);
+  position:relative;width:100%;max-width:920px;max-height:88vh;border-radius:32px;overflow:hidden;padding:0;
+  animation:cardIn .4s cubic-bezier(.2,.9,.25,1);
+  background:linear-gradient(135deg, var(--pink) 0%, var(--pink-soft) 30%, var(--pink) 60%, #2a0014 100%);
+  box-shadow:0 30px 100px rgba(0,0,0,.65), 0 0 70px rgba(255,31,143,.55);
 }
-.modal-frame::before{
-  content:'';
-  position:absolute;
-  /* центрируем квадрат и крутим его — только transform, никакого CPU-перерасчёта градиента */
-  top:50%;left:50%;
-  width:141.5%;   /* diagonal: sqrt(2) * 100% чтобы углы покрывали border-radius */
-  padding-top:141.5%;
-  transform:translate(-50%,-50%) rotate(0deg);
-  z-index:0;pointer-events:none;
-  background:conic-gradient(
-    #ff1f8f 0deg, #fff0f7 40deg, #ff79bd 80deg, #ff1f8f 140deg, #2a0014 200deg,
-    #ff4f9e 250deg, #ffd0e6 300deg, #ff1f8f 360deg);
-  animation:rotate 3s linear infinite;
-  will-change:transform;
-}
-.modal-content{position:relative;z-index:1;width:100%;max-height:calc(88vh - 8px);border-radius:28px;background:#0b0207;overflow:hidden}
-.modal-scroll{position:relative;z-index:1;max-height:calc(88vh - 8px);overflow-y:auto;padding:38px 44px 38px 34px;border-radius:inherit}
+.modal-content{position:relative;z-index:1;width:calc(100% - 6px);max-height:calc(88vh - 6px);margin:3px;border-radius:28px;background:#0b0207;overflow:hidden}
+.modal-scroll{position:relative;z-index:1;max-height:calc(88vh - 6px);overflow-y:auto;padding:38px 44px 38px 34px;border-radius:inherit}
 .close{position:absolute;top:14px;right:22px;z-index:6;font-size:3rem;line-height:1;cursor:pointer;color:#6a3550;transition:color .25s, transform .25s}
 .close:hover{color:var(--pink);transform:rotate(90deg)}
 .modal h2{font-family:'Unbounded',sans-serif;font-weight:800;font-size:1.9rem;text-align:center;margin-bottom:28px;padding:0 30px;background:linear-gradient(92deg,#fff,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 50px var(--pink-glow)}
 .map-img{width:100%;border-radius:18px;margin-bottom:24px;box-shadow:0 12px 40px rgba(0,0,0,.55)}
 
-/* ===== СЛАЙДЕР ===== */
 .modal-slider{position:absolute;top:20px;right:11px;bottom:20px;width:8px;z-index:5;display:none;touch-action:none}
 .modal-slider.on{display:block}
 .ms-track{position:absolute;inset:0;border-radius:8px;background:rgba(255,31,143,.10);box-shadow:inset 0 0 0 1px rgba(255,31,143,.2)}
@@ -262,47 +239,31 @@ body::before{
   background:linear-gradient(180deg,#ff5ea8,var(--pink) 50%,#ff79bd);
   box-shadow:0 0 14px var(--pink-glow), inset 0 0 0 1px rgba(255,255,255,.35);
   transition:box-shadow .2s, filter .2s;
-  will-change:transform;
 }
 .ms-thumb::before{content:'';position:absolute;left:50%;top:50%;width:3px;height:16px;border-radius:3px;transform:translate(-50%,-50%);background:rgba(255,255,255,.55);box-shadow:-4px 0 0 rgba(255,255,255,.45),4px 0 0 rgba(255,255,255,.45)}
 .ms-thumb:hover{filter:brightness(1.12)}
 .ms-thumb.drag{cursor:grabbing;box-shadow:0 0 24px var(--pink-glow), inset 0 0 0 1px rgba(255,255,255,.6)}
 
-/* ===== §-CARDS =====
-   item::before: убираем @property + spin (CPU в Chrome).
-   Заменяем на статичную рамку через box-shadow / outline + hover-эффект.
-   Визуально: тонкая розовая рамка с лёгким свечением — идентично оригиналу.
-   Без анимации на каждой карточке → огромный прирост в Chrome.
-*/
+/* §-CARDS — статичная рамка, никакой анимации */
 .item{
   position:relative;isolation:isolate;overflow:hidden;
   background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,31,143,.28);
+  border:1px solid rgba(255,31,143,.45);
   border-radius:16px;
   padding:20px 22px;
   margin:0 4px 16px;
-  box-shadow:0 10px 28px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.025), 0 0 0 0 rgba(255,31,143,0);
+  box-shadow:0 10px 28px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.025);
   opacity:0;
   transition:transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, border-color .3s ease;
-  will-change:transform,opacity;
 }
 .item.in{opacity:1;animation:itemReveal .6s cubic-bezier(.2,.85,.25,1) backwards}
-/* статичный gradient-border через ::before без анимации — только виден, не крутится */
-.item::before{
-  content:'';position:absolute;inset:0;padding:1px;border-radius:inherit;z-index:1;pointer-events:none;
-  background:linear-gradient(135deg, rgba(255,31,143,.7) 0%, rgba(255,121,189,.5) 40%, rgba(255,31,143,.15) 80%, rgba(255,31,143,.6) 100%);
-  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  opacity:.8;
-  /* никакого animation — это и есть главная оптимизация */
-}
 .item::after{
   content:'';position:absolute;inset:1px;border-radius:15px;z-index:-1;pointer-events:none;
   background:linear-gradient(135deg, rgba(255,31,143,.075), rgba(8,1,5,.1));
 }
 .item:hover{
   transform:translateY(-4px);
-  border-color:rgba(255,31,143,.55);
+  border-color:rgba(255,31,143,.7);
   box-shadow:0 18px 40px rgba(255,31,143,.22), inset 0 0 0 1px rgba(255,255,255,.025);
 }
 .item h4{font-family:'Unbounded',sans-serif;font-weight:700;color:var(--pink);font-size:1.05rem;margin-bottom:8px;text-shadow:0 0 14px rgba(255,31,143,.45)}
@@ -315,7 +276,6 @@ body::before{
 footer{position:relative;z-index:10;text-align:center;padding:24px 20px 50px;color:var(--ink-dim);font-size:.82rem;letter-spacing:1.5px}
 footer b{color:var(--pink)}
 
-/* ===== МОБИЛКИ ===== */
 @media (max-width:680px){
   .rule-btn{gap:14px;padding:16px 18px;min-height:86px}
   .rule-btn .num{min-width:48px;height:48px;font-size:1.25rem}
@@ -324,11 +284,9 @@ footer b{color:var(--pink)}
   .controls{margin-top:96px}
   .gate-core{width:170px;height:170px}
   .gate-logo{width:112px}
-  .lang-btn{width:280px;padding:15px 18px}
+  .lang-btn{width:280px;padding:15px 18px;backdrop-filter:blur(6px) saturate(115%);-webkit-backdrop-filter:blur(6px) saturate(115%)}
   .lb-name{font-size:1.1rem}
-  /* на мобилах снижаем blur */
-  .topbar{backdrop-filter:blur(6px) saturate(115%);-webkit-backdrop-filter:blur(6px) saturate(115%)}
-  .lang-btn{backdrop-filter:blur(6px) saturate(115%);-webkit-backdrop-filter:blur(6px) saturate(115%)}
+  body::after{opacity:.35} /* меньше «частиц» на мобиле */
 }
 
 @media (prefers-reduced-motion:reduce){
