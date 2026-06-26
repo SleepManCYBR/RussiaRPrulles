@@ -76,6 +76,7 @@
 
 <script>
 
+
 const i18n = {
   ru:{code:"RU",search:"Поиск по правилам…",all:"Все",fine:"Штрафы",severe:"Тяжкие",penalty:"НАКАЗАНИЕ",empty:"Ничего не найдено",switch:"Сменить язык"},
   uk:{code:"UA",search:"Пошук по правилах…",all:"Всі",fine:"Штрафи",severe:"Тяжкі",penalty:"ПОКАРАННЯ",empty:"Нічого не знайдено",switch:"Змінити мову"}
@@ -2343,7 +2344,6 @@ const rules = [
 ];
 let lang='ru', activeFilter='all';
 
-/* ── helpers ── */
 function setSwitchFlag(){
   const s=document.getElementById('langSwitch');
   s.classList.remove('flag-ru','flag-uk');
@@ -2375,30 +2375,21 @@ function pickLang(l){
   g.classList.add('hide');
   setTimeout(()=>{
     g.style.display='none';
-    g.classList.remove('anim');
-    /* останавливаем анимации частиц и колец внутри гейта */
-    g.querySelectorAll('.core-ring,.core-ring2,.rise-dot').forEach(el=>{
-      el.style.animationPlayState='paused';
-    });
+    g.classList.remove('anim'); /* .anim снят → ВСЕ анимации в #gate останавливаются по CSS-селекторам */
   },520);
 }
 function reopenGate(){
   const g=document.getElementById('gate');
   g.style.display='flex';
   g.classList.remove('hide');
-  /* возобновляем анимации */
-  g.querySelectorAll('.core-ring,.core-ring2,.rise-dot').forEach(el=>{
-    el.style.animationPlayState='';
-  });
   void g.offsetWidth;
   g.classList.add('anim');
 }
 
-/* ── поиск с дебаунсом ── */
 let _searchTimer=null;
 document.getElementById('search').addEventListener('input',()=>{
   clearTimeout(_searchTimer);
-  _searchTimer=setTimeout(render,120);
+  _searchTimer=setTimeout(render,140);
 });
 
 function render(){
@@ -2480,15 +2471,15 @@ document.getElementById('filters').addEventListener('click',e=>{
 let _resizeTimer=null;
 addEventListener('resize',()=>{
   clearTimeout(_resizeTimer);
-  _resizeTimer=setTimeout(()=>positionPill(true),80);
+  _resizeTimer=setTimeout(()=>positionPill(true),100);
 });
 
-/* ── частицы гейта (IIFE) ── */
+/* Частицы гейта — мало и только в гейте.
+   Когда у #gate нет .anim, CSS их анимацию не запускает. */
 (function(){
   const c=document.getElementById('gp');if(!c)return;
-  /* на мобилах меньше частиц */
   const isMobile=innerWidth<=680;
-  const count=isMobile?16:34;
+  const count=isMobile?10:18; /* было 34 → 18, экономия CPU */
   let s='';
   for(let i=0;i<count;i++){
     const left=(28+Math.random()*44).toFixed(1);
@@ -2502,7 +2493,7 @@ addEventListener('resize',()=>{
   c.innerHTML=s;
 })();
 
-/* ── кастомный скроллбар модалки ── */
+/* Кастомный скроллбар модалки */
 (function(){
   const slider=document.getElementById('mSlider');
   const thumb=document.getElementById('mThumb');
@@ -2558,66 +2549,12 @@ addEventListener('resize',()=>{
   });
 })();
 
-/* ── Canvas (частицы фона) с throttle 30fps и паузой при скрытой вкладке ── */
-(function(){
-  const canvas=document.getElementById('fx');
-  const ctx=canvas.getContext('2d',{alpha:true,desynchronized:true});
-  let parts=[];
-
-  /* офф-скрин спрайт — создаём один раз */
-  const sprite=document.createElement('canvas');
-  sprite.width=sprite.height=48;
-  (function(){
-    const c=sprite.getContext('2d');
-    const g=c.createRadialGradient(24,24,0,24,24,24);
-    g.addColorStop(0,'rgba(255,120,190,0.9)');
-    g.addColorStop(.4,'rgba(255,31,143,0.32)');
-    g.addColorStop(1,'rgba(255,31,143,0)');
-    c.fillStyle=g;c.fillRect(0,0,48,48);
-  })();
-
-  function resize(){
-    canvas.width=innerWidth;
-    canvas.height=innerHeight;
-    parts=[];
-    /* на мобилах меньше частиц — экономим GPU */
-    const isMobile=innerWidth<=680;
-    const n=isMobile ? Math.min(12,Math.floor(innerWidth/60)) : Math.min(26,Math.floor(innerWidth/48));
-    for(let i=0;i<n;i++)
-      parts.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*9+5,s:Math.random()*0.35+0.1,a:Math.random()*0.35+0.12});
-  }
-
-  let _resizeTimer2=null;
-  addEventListener('resize',()=>{clearTimeout(_resizeTimer2);_resizeTimer2=setTimeout(resize,150);});
-  resize();
-
-  /* throttle: не чаще 30fps (~33ms) */
-  const FPS_LIMIT=33;
-  let lastFrame=0;
-  let running=true;
-
-  document.addEventListener('visibilitychange',()=>{
-    running=!document.hidden;
-    if(running)loop(0);
-  });
-
-  function loop(ts){
-    if(!running)return;
-    requestAnimationFrame(loop);
-    if(ts-lastFrame < FPS_LIMIT)return; /* пропускаем кадр */
-    lastFrame=ts;
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    for(const p of parts){
-      ctx.globalAlpha=p.a;
-      ctx.drawImage(sprite,p.x-p.r,p.y-p.r,p.r*2,p.r*2);
-      p.y-=p.s;
-      if(p.y<-p.r){p.y=canvas.height+p.r;p.x=Math.random()*canvas.width;}
-    }
-    ctx.globalAlpha=1;
-  }
-
-  if(!matchMedia('(prefers-reduced-motion:reduce)').matches) requestAnimationFrame(loop);
-})();
+/* CANVAS ПОЛНОСТЬЮ УБРАН.
+   Раньше он рисовал 26 частиц с радиальным градиентом каждый кадр — это
+   была основная причина перегрева Chrome. Фон теперь чисто CSS — body::after
+   с 8 статичными точками-радиалами выглядит почти как живые частицы,
+   но не нагружает ни CPU, ни GPU.
+*/
 
 applyLang();
 window.addEventListener('load',()=>setTimeout(()=>positionPill(true),60));
