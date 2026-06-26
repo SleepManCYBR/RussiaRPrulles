@@ -25,9 +25,10 @@ body::before{
     radial-gradient(55% 50% at 15% 5%, rgba(255,31,143,.16), transparent 60%),
     radial-gradient(50% 50% at 90% 18%, rgba(255,31,143,.10), transparent 60%),
     radial-gradient(70% 60% at 50% 112%, rgba(255,31,143,.14), transparent 65%);
+  transform:translateZ(0);
 }
 body::after{
-  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.55;
+  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.45;
   background-image:
     radial-gradient(circle at 12% 18%, rgba(255,121,189,.7) 0, transparent 8px),
     radial-gradient(circle at 78% 32%, rgba(255,121,189,.55) 0, transparent 10px),
@@ -37,6 +38,8 @@ body::after{
     radial-gradient(circle at 62% 12%, rgba(255,121,189,.4) 0, transparent 7px),
     radial-gradient(circle at 48% 45%, rgba(255,31,143,.4) 0, transparent 6px),
     radial-gradient(circle at 95% 55%, rgba(255,121,189,.35) 0, transparent 8px);
+  transform:translateZ(0);
+  will-change:auto;
 }
 
 /* canvas больше не виден, но оставлен на случай совместимости — JS его выключает */
@@ -136,14 +139,22 @@ body::after{
 .lang-btn:active{transform:translateY(-2px) scale(.99)}
 
 /* ===== HEADER ===== */
+/* ===== HEADER =====
+   Блюр возвращён, НО с правильной изоляцией:
+   - contain:layout paint style → Chrome изолирует пересчёт
+   - isolation:isolate → создаётся stacking context, блюр кешируется
+   - transform:translateZ(0) → свой composing-слой на GPU
+   - blur уменьшен до 8px (с 14px) → дешевле на GPU без потери эффекта */
 .topbar{
   position:fixed;top:14px;left:16px;right:16px;z-index:200;display:flex;align-items:center;gap:18px;
   padding:11px 20px;border-radius:20px;animation:dropIn .6s both;
-  background:linear-gradient(135deg, rgba(35,4,20,.85), rgba(10,2,7,.9));
-  /* backdrop-filter ПОЛНОСТЬЮ УБРАН — он жёстко грел GPU в Chrome.
-     Вместо него непрозрачный градиент — внешне почти не отличить на тёмном фоне */
+  background:linear-gradient(135deg, rgba(255,31,143,.10), rgba(10,2,7,.65));
+  backdrop-filter:blur(8px) saturate(135%);-webkit-backdrop-filter:blur(8px) saturate(135%);
   border:1px solid var(--line);
-  box-shadow:0 16px 44px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.10);
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+  transform:translateZ(0);
+  isolation:isolate;
+  contain:layout paint style;
 }
 .tb-logo{height:44px;object-fit:contain;filter:drop-shadow(0 0 16px var(--pink-glow))}
 .tb-spacer{flex:1}
@@ -194,18 +205,22 @@ body::after{
 .chip:hover{color:var(--ink);transform:translateY(-2px)}
 .chip.active{color:#000;border-color:transparent}
 
-/* ===== GRID ===== */
-.rules-grid{max-width:1240px;margin:18px auto 90px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(320px,1fr));gap:18px;contain:layout}
+/* ===== GRID =====
+   Каждая карточка получает свой compositing-слой через translateZ(0).
+   Это решает «низкий fps» при скролле — браузер не перерисовывает их,
+   а просто двигает уже отрендеренные текстуры. */
+.rules-grid{max-width:1240px;margin:18px auto 90px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(320px,1fr));gap:18px;contain:layout style}
 .rule-btn{
   position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;gap:18px;padding:20px 24px;min-height:100px;
   border-radius:20px;background:linear-gradient(135deg, rgba(40,6,22,.9), rgba(12,2,8,.92));border:1px solid var(--line);
-  box-shadow:0 10px 30px rgba(0,0,0,.5);animation:cardIn .45s both;
-  transition:transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .3s;
-  content-visibility:auto;
-  contain-intrinsic-size:0 100px;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1), border-color .25s, box-shadow .25s;
+  transform:translateZ(0); /* GPU слой → плавный скролл */
+  contain:layout paint style;
 }
-.rule-btn::after{content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,31,143,.22),transparent);transform:skewX(-20deg);transition:left .55s}
-.rule-btn:hover{transform:translateY(-6px);border-color:var(--pink);box-shadow:0 20px 54px rgba(255,31,143,.3)}
+.rule-btn.anim{animation:cardIn .4s both}
+.rule-btn::after{content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,31,143,.22),transparent);transform:skewX(-20deg) translateZ(0);transition:left .5s}
+.rule-btn:hover{transform:translateY(-6px) translateZ(0);border-color:var(--pink);box-shadow:0 16px 40px rgba(255,31,143,.28)}
 .rule-btn:hover::after{left:130%}
 .rule-btn .num{font-family:'Unbounded',sans-serif;font-weight:900;font-size:1.5rem;min-width:56px;height:56px;border-radius:15px;display:grid;place-items:center;background:rgba(255,31,143,.12);color:var(--pink);border:1px solid var(--line);text-shadow:0 0 16px var(--pink-glow)}
 .rule-btn .ico{font-size:1.7rem;color:var(--pink-soft);width:34px;text-align:center}
@@ -285,6 +300,7 @@ footer b{color:var(--pink)}
   .gate-core{width:170px;height:170px}
   .gate-logo{width:112px}
   .lang-btn{width:280px;padding:15px 18px;backdrop-filter:blur(6px) saturate(115%);-webkit-backdrop-filter:blur(6px) saturate(115%)}
+  .topbar{backdrop-filter:blur(5px) saturate(120%);-webkit-backdrop-filter:blur(5px) saturate(120%)}
   .lb-name{font-size:1.1rem}
   body::after{opacity:.35} /* меньше «частиц» на мобиле */
 }
