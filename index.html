@@ -14,12 +14,7 @@
 <canvas id="fx"></canvas>
 
 <div id="gate" class="anim">
-  <div class="gate-glow-bottom"></div>
-  <div class="gate-rise" id="gp"></div>
-
   <div class="gate-core">
-    <div class="core-ring"></div>
-    <div class="core-ring core-ring2"></div>
     <img class="gate-logo" src="https://i.ibb.co/6RWpCgz6/Untitled231-20260721005127-removebg-preview.png" alt="">
   </div>
 
@@ -2473,25 +2468,6 @@ addEventListener('resize',()=>{
   clearTimeout(_resizeTimer);
   _resizeTimer=setTimeout(()=>positionPill(true),100);
 });
-
-/* Частицы гейта — мало и только в гейте.
-   Когда у #gate нет .anim, CSS их анимацию не запускает. */
-(function(){
-  const c=document.getElementById('gp');if(!c)return;
-  const isMobile=innerWidth<=680;
-  const count=isMobile?10:18; /* было 34 → 18, экономия CPU */
-  let s='';
-  for(let i=0;i<count;i++){
-    const left=(28+Math.random()*44).toFixed(1);
-    const dx=(Math.random()*160-80).toFixed(0);
-    const rise=-(62+Math.random()*46).toFixed(0);
-    const d=(5.5+Math.random()*5).toFixed(2);
-    const delay=(Math.random()*7).toFixed(2);
-    const sz=(3+Math.random()*5).toFixed(1);
-    s+='<span class="rise-dot" style="left:'+left+'%;--dx:'+dx+'px;--rise:'+rise+'vh;--d:'+d+'s;--delay:'+delay+'s;width:'+sz+'px;height:'+sz+'px"></span>';
-  }
-  c.innerHTML=s;
-})();
 
 /* Кастомный скроллбар модалки */
 (function(){
