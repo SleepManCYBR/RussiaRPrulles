@@ -485,6 +485,74 @@ const rules = [
 "uk": "Зелені зони (Green Zone)",
 "en": "Green Zones"
 },
+"image": "https://i.ibb.co/Y7fvgrBp/Untitled222-20260624191546.png",
+"altTab": {
+"icon": "fa-road-barrier",
+"tt": {
+"ru": "КПП и блокпосты",
+"uk": "КПП та блокпости",
+"en": "Checkpoints"
+},
+"image": "https://i.ibb.co/WvbdXKzs/Untitled222-20260624192004.png",
+"items": [
+{
+"sub": "§4.1",
+"type": "fine",
+"t": {
+"ru": "Игнорирование требования остановки на КПП.",
+"uk": "Ігнорування вимоги зупинки на КПП.",
+"en": "Ignoring a stop order at a checkpoint."
+},
+"p": {
+"ru": "Штраф 5500€",
+"uk": "Штраф 5500€",
+"en": "5500€ fine"
+}
+},
+{
+"sub": "§4.2",
+"type": "fine",
+"t": {
+"ru": "Использование оружия на КПП.",
+"uk": "Використання зброї на КПП.",
+"en": "Using a weapon at a checkpoint."
+},
+"p": {
+"ru": "Штраф 8000€",
+"uk": "Штраф 8000€",
+"en": "8000€ fine"
+}
+},
+{
+"sub": "§4.3",
+"type": "fine",
+"t": {
+"ru": "Отказ от проверки документов.",
+"uk": "Відмова від перевірки документів.",
+"en": "Refusing a document check."
+},
+"p": {
+"ru": "Штраф 4000€",
+"uk": "Штраф 4000€",
+"en": "4000€ fine"
+}
+},
+{
+"sub": "§4.4",
+"type": "fine",
+"t": {
+"ru": "Проверка транспорта без RP-причины (со стороны полиции).",
+"uk": "Перевірка транспорту без RP-причини (з боку поліції).",
+"en": "Vehicle search without an RP reason (by police)."
+},
+"p": {
+"ru": "Штраф 6000€",
+"uk": "Штраф 6000€",
+"en": "6000€ fine"
+}
+}
+]
+},
 "items": [
 {
 "sub": "§3.1",
@@ -2142,22 +2210,47 @@ document.getElementById('grid').addEventListener('click',e=>{
 });
 
 let itemObserver=null;
+let currentModalRule=null;
+let modalTab=0;
 function openModal(rule){
+  currentModalRule=rule;
+  modalTab=0;
+  const modal=document.getElementById('modal');
+  modal.classList.add('show');
+  renderModalTab();
+  requestAnimationFrame(()=>{ if(window.modalSliderUpdate)window.modalSliderUpdate(); });
+}
+function renderModalTab(){
+  const rule=currentModalRule;if(!rule)return;
   const t=i18n[lang];
-  document.getElementById('modalTitle').textContent=rule.num+'. '+(rule.tt[lang]||rule.tt.uk);
+  const src=(modalTab===1&&rule.altTab)?rule.altTab:rule;
+  document.getElementById('modalTitle').textContent=(modalTab===0?rule.num+'. ':'')+(src.tt[lang]||src.tt.uk);
   let h='';
-  if(rule.image)h+='<img class="map-img" src="'+rule.image+'" loading="lazy" decoding="async" alt="">';
-  rule.items.forEach(x=>{
+  if(rule.altTab){
+    h+='<div class="modal-tabs">'
+      +'<button class="mtab'+(modalTab===0?' active':'')+'" data-tab="0"><i class="fa-solid '+rule.icon+'"></i>'+(rule.tt[lang]||rule.tt.uk)+'</button>'
+      +'<button class="mtab'+(modalTab===1?' active':'')+'" data-tab="1"><i class="fa-solid '+rule.altTab.icon+'"></i>'+(rule.altTab.tt[lang]||rule.altTab.tt.uk)+'</button>'
+      +'</div>';
+  }
+  if(src.image)h+='<img class="map-img" src="'+src.image+'" loading="lazy" decoding="async" alt="">';
+  src.items.forEach(x=>{
     if(activeFilter!=='all'&&x.type!==activeFilter)return;
     h+='<div class="item">'+(x.sub?'<h4>'+x.sub+'</h4>':'')+'<p>'+x.t[lang]+'</p><span class="penalty '+x.type+'">'+t.penalty+': '+x.p[lang]+'</span></div>';
   });
   const body=document.getElementById('modalBody');
   body.innerHTML=h;
+  body.querySelectorAll('.mtab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const tab=+btn.dataset.tab;
+      if(tab===modalTab)return;
+      modalTab=tab;
+      renderModalTab();
+      const scroller=document.querySelector('#modal .modal-scroll');
+      scroller.scrollTop=0;
+    });
+  });
   const scroller=document.querySelector('#modal .modal-scroll');
   scroller.scrollTop=0;
-  const modal=document.getElementById('modal');
-  modal.classList.add('show');
-  requestAnimationFrame(()=>{ if(window.modalSliderUpdate)window.modalSliderUpdate(); });
 
   if(itemObserver)itemObserver.disconnect();
   const items=[...body.querySelectorAll('.item')];
@@ -2184,6 +2277,7 @@ function openModal(rule){
 function closeModal(){
   document.getElementById('modal').classList.remove('show');
   if(itemObserver){itemObserver.disconnect();itemObserver=null;}
+  currentModalRule=null;
 }
 document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
 
