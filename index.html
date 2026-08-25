@@ -67,14 +67,20 @@
   </div>
 </div>
 
+<div class="img-zoom" id="imgZoom">
+  <span class="zoom-close" id="zoomClose">×</span>
+  <div class="zoom-stage" id="zoomStage"><img id="zoomImg" src="" alt="" draggable="false"></div>
+  <div class="zoom-hint" id="zoomHint"></div>
+</div>
+
 <footer>© 2026 <b>KHERSON RP</b> · ALL RIGHTS RESERVED</footer>
 
 <script>
 
 
 const i18n = {
-  ru:{code:"RU",search:"Поиск по правилам…",all:"Все",fine:"Штрафы",severe:"Тяжкие",penalty:"НАКАЗАНИЕ",empty:"Ничего не найдено",switch:"Сменить язык"},
-  uk:{code:"UA",search:"Пошук по правилах…",all:"Всі",fine:"Штрафи",severe:"Тяжкі",penalty:"ПОКАРАННЯ",empty:"Нічого не знайдено",switch:"Змінити мову"}
+  ru:{code:"RU",search:"Поиск по правилам…",all:"Все",fine:"Штрафы",severe:"Тяжкие",penalty:"НАКАЗАНИЕ",empty:"Ничего не найдено",switch:"Сменить язык",zoomHint:"Колесо — зум · зажмите и тяните — перемещение · двойной клик — сброс"},
+  uk:{code:"UA",search:"Пошук по правилах…",all:"Всі",fine:"Штрафи",severe:"Тяжкі",penalty:"ПОКАРАННЯ",empty:"Нічого не знайдено",switch:"Змінити мову",zoomHint:"Колесо — зум · затисніть і тягніть — переміщення · подвійний клік — скидання"}
 };
 const rules = [
 {
@@ -485,74 +491,14 @@ const rules = [
 "uk": "Зелені зони (Green Zone)",
 "en": "Green Zones"
 },
-"image": "https://i.ibb.co/Y7fvgrBp/Untitled222-20260624191546.png",
-"altTab": {
-"icon": "fa-road-barrier",
-"tt": {
-"ru": "КПП и блокпосты",
-"uk": "КПП та блокпости",
-"en": "Checkpoints"
-},
-"image": "https://i.ibb.co/WvbdXKzs/Untitled222-20260624192004.png",
-"items": [
-{
-"sub": "§4.1",
-"type": "fine",
-"t": {
-"ru": "Игнорирование требования остановки на КПП.",
-"uk": "Ігнорування вимоги зупинки на КПП.",
-"en": "Ignoring a stop order at a checkpoint."
-},
-"p": {
-"ru": "Штраф 5500€",
-"uk": "Штраф 5500€",
-"en": "5500€ fine"
-}
-},
-{
-"sub": "§4.2",
-"type": "fine",
-"t": {
-"ru": "Использование оружия на КПП.",
-"uk": "Використання зброї на КПП.",
-"en": "Using a weapon at a checkpoint."
-},
-"p": {
-"ru": "Штраф 8000€",
-"uk": "Штраф 8000€",
-"en": "8000€ fine"
-}
-},
-{
-"sub": "§4.3",
-"type": "fine",
-"t": {
-"ru": "Отказ от проверки документов.",
-"uk": "Відмова від перевірки документів.",
-"en": "Refusing a document check."
-},
-"p": {
-"ru": "Штраф 4000€",
-"uk": "Штраф 4000€",
-"en": "4000€ fine"
-}
-},
-{
-"sub": "§4.4",
-"type": "fine",
-"t": {
-"ru": "Проверка транспорта без RP-причины (со стороны полиции).",
-"uk": "Перевірка транспорту без RP-причини (з боку поліції).",
-"en": "Vehicle search without an RP reason (by police)."
-},
-"p": {
-"ru": "Штраф 6000€",
-"uk": "Штраф 6000€",
-"en": "6000€ fine"
-}
-}
-]
-},
+"image": "https://i.ibb.co/JWyNf6xP/image.png",
+"legend": [
+{"icon":"fa-lock","color":"#3ddc73","tt":{"ru":"Зелёные зоны","uk":"Зелені зони","en":"Green zones"}},
+{"shape":"outline","color":"#3ddc73","fill":"#ff3b3b","tt":{"ru":"Приватная территория (зелёная обводка + красное заполнение)","uk":"Приватна територія (зелена обводка + червоне заповнення)","en":"Private territory (green outline + red fill)"}},
+{"icon":"fa-burst","color":"#3ea6ff","tt":{"ru":"Ивентовые зоны","uk":"Івентові зони","en":"Event zones"}},
+{"icon":"fa-house","color":"#ff9a3d","tt":{"ru":"Руф-кемп зоны","uk":"Руф-кемп зони","en":"Roof camp zones"}},
+{"icon":"fa-satellite-dish","color":"#8a2f3a","shape":"circle","tt":{"ru":"Зоны, где разрешены радары","uk":"Зони, де дозволені радари","en":"Zones where radars are allowed"}}
+],
 "items": [
 {
 "sub": "§3.1",
@@ -628,6 +574,77 @@ const rules = [
 },
 {
 "num": 4,
+"icon": "fa-road-barrier",
+"tt": {
+"ru": "КПП и блокпосты",
+"uk": "КПП та блокпости",
+"en": "Checkpoints"
+},
+"image": "https://i.ibb.co/bj0Zg9kh/image.png",
+"legend": [
+{"icon":"fa-shield-halved","color":"#ff3b3b","tt":{"ru":"КПП / блокпост","uk":"КПП / блокпост","en":"Checkpoint / blockpost"}}
+],
+"items": [
+{
+"sub": "§4.1",
+"type": "fine",
+"t": {
+"ru": "Игнорирование требования остановки на КПП.",
+"uk": "Ігнорування вимоги зупинки на КПП.",
+"en": "Ignoring a stop order at a checkpoint."
+},
+"p": {
+"ru": "Штраф 5500€",
+"uk": "Штраф 5500€",
+"en": "5500€ fine"
+}
+},
+{
+"sub": "§4.2",
+"type": "fine",
+"t": {
+"ru": "Использование оружия на КПП.",
+"uk": "Використання зброї на КПП.",
+"en": "Using a weapon at a checkpoint."
+},
+"p": {
+"ru": "Штраф 8000€",
+"uk": "Штраф 8000€",
+"en": "8000€ fine"
+}
+},
+{
+"sub": "§4.3",
+"type": "fine",
+"t": {
+"ru": "Отказ от проверки документов.",
+"uk": "Відмова від перевірки документів.",
+"en": "Refusing a document check."
+},
+"p": {
+"ru": "Штраф 4000€",
+"uk": "Штраф 4000€",
+"en": "4000€ fine"
+}
+},
+{
+"sub": "§4.4",
+"type": "fine",
+"t": {
+"ru": "Проверка транспорта без RP-причины (со стороны полиции).",
+"uk": "Перевірка транспорту без RP-причини (з боку поліції).",
+"en": "Vehicle search without an RP reason (by police)."
+},
+"p": {
+"ru": "Штраф 6000€",
+"uk": "Штраф 6000€",
+"en": "6000€ fine"
+}
+}
+]
+},
+{
+"num": 5,
 "icon": "fa-gun",
 "tt": {
 "ru": "Оружие и лицензия",
@@ -2232,7 +2249,17 @@ function renderModalTab(){
       +'<button class="mtab'+(modalTab===1?' active':'')+'" data-tab="1"><i class="fa-solid '+rule.altTab.icon+'"></i>'+(rule.altTab.tt[lang]||rule.altTab.tt.uk)+'</button>'
       +'</div>';
   }
-  if(src.image)h+='<img class="map-img" src="'+src.image+'" loading="lazy" decoding="async" alt="">';
+  if(src.image)h+='<img class="map-img" src="'+src.image+'" loading="lazy" decoding="async" alt="" onclick="openMapZoom(this.src)">';
+  if(src.legend){
+    h+='<div class="map-legend">';
+    src.legend.forEach(l=>{
+      const swStyle=(l.shape==='outline')
+        ? 'background:'+(l.fill||'transparent')+';border-color:'+l.color+';'
+        : 'background:'+l.color+';border-color:'+l.color+';';
+      h+='<div class="legend-item"><span class="legend-swatch'+(l.shape==='circle'?' circle':'')+'" style="'+swStyle+'">'+(l.icon?'<i class="fa-solid '+l.icon+'"></i>':'')+'</span><span class="legend-text">'+(l.tt[lang]||l.tt.uk)+'</span></div>';
+    });
+    h+='</div>';
+  }
   src.items.forEach(x=>{
     if(activeFilter!=='all'&&x.type!==activeFilter)return;
     h+='<div class="item">'+(x.sub?'<h4>'+x.sub+'</h4>':'')+'<p>'+x.t[lang]+'</p><span class="penalty '+x.type+'">'+t.penalty+': '+x.p[lang]+'</span></div>';
@@ -2356,6 +2383,103 @@ addEventListener('resize',()=>{
    с 8 статичными точками-радиалами выглядит почти как живые частицы,
    но не нагружает ни CPU, ни GPU.
 */
+
+/* ===== MAP IMAGE ZOOM VIEWER =====
+   Клик по карте (ЗЗ / КПП) открывает полноэкранный просмотр:
+   колесо мыши / щипок двумя пальцами — зум к точке курсора/пальцев,
+   зажать и тянуть — перемещение, двойной клик/тап — сброс или зум x2.4. */
+(function(){
+  const overlay=document.getElementById('imgZoom');
+  const stage=document.getElementById('zoomStage');
+  const img=document.getElementById('zoomImg');
+  const hint=document.getElementById('zoomHint');
+  const MIN=1,MAX=6,DBL=2.4;
+  let scale=1,posX=0,posY=0;
+  let dragging=false,startX=0,startY=0,startPosX=0,startPosY=0,moved=false;
+  let pinchDist=0,pinchScale=1;
+
+  function apply(){ img.style.transform='translate('+posX+'px,'+posY+'px) scale('+scale+')'; }
+  function reset(){ scale=1;posX=0;posY=0;apply(); }
+  function zoomAt(cx,cy,newScale){
+    newScale=Math.min(MAX,Math.max(MIN,newScale));
+    const ratio=newScale/scale;
+    posX-=cx*(ratio-1);posY-=cy*(ratio-1);
+    scale=newScale;
+    if(scale===MIN){posX=0;posY=0;}
+    apply();
+  }
+
+  window.openMapZoom=function(src){
+    img.src=src;
+    reset();
+    overlay.classList.add('show');
+    hint.textContent=(i18n[lang]&&i18n[lang].zoomHint)||'';
+    document.body.style.overflow='hidden';
+  };
+  function closeZoom(){
+    overlay.classList.remove('show');
+    document.body.style.overflow='';
+    setTimeout(()=>{ if(!overlay.classList.contains('show')) img.src=''; },250);
+  }
+  document.getElementById('zoomClose').addEventListener('click',closeZoom);
+  overlay.addEventListener('click',e=>{ if(e.target===overlay||e.target===stage)closeZoom(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&overlay.classList.contains('show'))closeZoom(); });
+
+  overlay.addEventListener('wheel',e=>{
+    if(!overlay.classList.contains('show'))return;
+    e.preventDefault();
+    const rect=img.getBoundingClientRect();
+    zoomAt(e.clientX-rect.left,e.clientY-rect.top,scale*(e.deltaY<0?1.18:1/1.18));
+  },{passive:false});
+
+  img.addEventListener('mousedown',e=>{
+    if(scale<=MIN)return;
+    e.preventDefault();dragging=true;moved=false;img.classList.add('dragging');
+    startX=e.clientX;startY=e.clientY;startPosX=posX;startPosY=posY;
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    moved=true;
+    posX=startPosX+(e.clientX-startX);posY=startPosY+(e.clientY-startY);
+    apply();
+  });
+  window.addEventListener('mouseup',()=>{dragging=false;img.classList.remove('dragging');});
+
+  img.addEventListener('dblclick',e=>{
+    const rect=img.getBoundingClientRect();
+    if(scale>MIN)reset();
+    else zoomAt(e.clientX-rect.left,e.clientY-rect.top,DBL);
+  });
+
+  function touchDist(t){ const dx=t[0].clientX-t[1].clientX,dy=t[0].clientY-t[1].clientY; return Math.hypot(dx,dy); }
+  overlay.addEventListener('touchstart',e=>{
+    if(e.touches.length===2){
+      pinchDist=touchDist(e.touches);pinchScale=scale;
+    } else if(e.touches.length===1){
+      dragging=scale>MIN;moved=false;
+      startX=e.touches[0].clientX;startY=e.touches[0].clientY;startPosX=posX;startPosY=posY;
+    }
+  },{passive:true});
+  overlay.addEventListener('touchmove',e=>{
+    if(e.touches.length===2){
+      e.preventDefault();
+      const rect=img.getBoundingClientRect();
+      const midX=(e.touches[0].clientX+e.touches[1].clientX)/2-rect.left;
+      const midY=(e.touches[0].clientY+e.touches[1].clientY)/2-rect.top;
+      zoomAt(midX,midY,pinchScale*(touchDist(e.touches)/pinchDist));
+    } else if(e.touches.length===1&&dragging){
+      e.preventDefault();moved=true;
+      posX=startPosX+(e.touches[0].clientX-startX);posY=startPosY+(e.touches[0].clientY-startY);
+      apply();
+    }
+  },{passive:false});
+  overlay.addEventListener('touchend',e=>{
+    if(!moved&&scale<=MIN&&e.changedTouches&&e.changedTouches.length===1){
+      // одиночный тап без движения и без зума — ничего не делаем (не закрываем случайно)
+    }
+    dragging=false;
+  });
+})();
 
 applyLang();
 window.addEventListener('load',()=>setTimeout(()=>positionPill(true),60));
