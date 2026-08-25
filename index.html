@@ -79,8 +79,8 @@
 
 
 const i18n = {
-  ru:{code:"RU",search:"Поиск по правилам…",all:"Все",fine:"Штрафы",severe:"Тяжкие",penalty:"НАКАЗАНИЕ",empty:"Ничего не найдено",switch:"Сменить язык",zoomHint:"Колесо — зум · зажмите и тяните — перемещение · двойной клик — сброс"},
-  uk:{code:"UA",search:"Пошук по правилах…",all:"Всі",fine:"Штрафи",severe:"Тяжкі",penalty:"ПОКАРАННЯ",empty:"Нічого не знайдено",switch:"Змінити мову",zoomHint:"Колесо — зум · затисніть і тягніть — переміщення · подвійний клік — скидання"}
+  ru:{code:"RU",search:"Поиск по правилам…",all:"Все",fine:"Штрафы",severe:"Тяжкие",penalty:"НАКАЗАНИЕ",empty:"Ничего не найдено",switch:"Сменить язык",zoomHint:"Колесо — зум · зажмите и тяните — перемещение · двойной клик — сброс",legendTitle:"Легенда карты"},
+  uk:{code:"UA",search:"Пошук по правилах…",all:"Всі",fine:"Штрафи",severe:"Тяжкі",penalty:"ПОКАРАННЯ",empty:"Нічого не знайдено",switch:"Змінити мову",zoomHint:"Колесо — зум · затисніть і тягніть — переміщення · подвійний клік — скидання",legendTitle:"Легенда карти"}
 };
 const rules = [
 {
@@ -2251,12 +2251,13 @@ function renderModalTab(){
   }
   if(src.image)h+='<img class="map-img" src="'+src.image+'" loading="lazy" decoding="async" alt="" onclick="openMapZoom(this.src)">';
   if(src.legend){
-    h+='<div class="map-legend">';
+    h+='<div class="map-legend"><div class="legend-title"><i class="fa-solid fa-map"></i>'+(t.legendTitle||'')+'</div>';
     src.legend.forEach(l=>{
       const swStyle=(l.shape==='outline')
         ? 'background:'+(l.fill||'transparent')+';border-color:'+l.color+';'
         : 'background:'+l.color+';border-color:'+l.color+';';
-      h+='<div class="legend-item"><span class="legend-swatch'+(l.shape==='circle'?' circle':'')+'" style="'+swStyle+'">'+(l.icon?'<i class="fa-solid '+l.icon+'"></i>':'')+'</span><span class="legend-text">'+(l.tt[lang]||l.tt.uk)+'</span></div>';
+      const swClass='legend-swatch'+(l.shape==='circle'?' circle':'')+(l.shape==='outline'?' outline':'');
+      h+='<div class="legend-item"><span class="'+swClass+'" style="'+swStyle+'">'+(l.icon?'<i class="fa-solid '+l.icon+'"></i>':'')+'</span><span class="legend-text">'+(l.tt[lang]||l.tt.uk)+'</span></div>';
     });
     h+='</div>';
   }
@@ -2385,33 +2386,53 @@ addEventListener('resize',()=>{
 */
 
 /* ===== MAP IMAGE ZOOM VIEWER =====
-   Клик по карте (ЗЗ / КПП) открывает полноэкранный просмотр:
-   колесо мыши / щипок двумя пальцами — зум к точке курсора/пальцев,
-   зажать и тянуть — перемещение, двойной клик/тап — сброс или зум x2.4. */
+   Изображение показывается в НАТИВНОМ пиксельном разрешении (без max-width/
+   max-height), а вписывание в экран и весь зум/пан считаются в JS через
+   translate+scale. Раньше картинка сначала растрировалась уменьшенной
+   (max-width:92vw), а потом transform:scale просто увеличивал уже смазанный
+   растр — отсюда была нечёткость. Теперь при зуме видно реальные пиксели
+   картинки, чётко, пока не упрёшься в её собственное разрешение (как в фотошопе).
+   Колесо мыши / щипок двумя пальцами — зум к точке курсора/пальцев,
+   зажать и тянуть — перемещение, двойной клик/тап — сброс или приближение. */
 (function(){
   const overlay=document.getElementById('imgZoom');
-  const stage=document.getElementById('zoomStage');
   const img=document.getElementById('zoomImg');
   const hint=document.getElementById('zoomHint');
-  const MIN=1,MAX=6,DBL=2.4;
-  let scale=1,posX=0,posY=0;
-  let dragging=false,startX=0,startY=0,startPosX=0,startPosY=0,moved=false;
+  const PAD=0.94; // доля вьюпорта, в которую вписываем картинку при открытии
+  let fitScale=1,scale=1,posX=0,posY=0;
+  let dragging=false,startX=0,startY=0,startPosX=0,startPosY=0;
   let pinchDist=0,pinchScale=1;
 
   function apply(){ img.style.transform='translate('+posX+'px,'+posY+'px) scale('+scale+')'; }
-  function reset(){ scale=1;posX=0;posY=0;apply(); }
-  function zoomAt(cx,cy,newScale){
-    newScale=Math.min(MAX,Math.max(MIN,newScale));
+  function clampScale(s){ return Math.min(fitScale*10,Math.max(fitScale,s)); }
+  function centerAt(fs){
+    const w=img.naturalWidth*fs, h=img.naturalHeight*fs;
+    posX=(window.innerWidth-w)/2;
+    posY=(window.innerHeight-h)/2;
+  }
+  function reset(){ scale=fitScale; centerAt(scale); apply(); }
+  function zoomAt(screenX,screenY,newScale){
+    newScale=clampScale(newScale);
     const ratio=newScale/scale;
-    posX-=cx*(ratio-1);posY-=cy*(ratio-1);
+    posX=screenX-(screenX-posX)*ratio;
+    posY=screenY-(screenY-posY)*ratio;
     scale=newScale;
-    if(scale===MIN){posX=0;posY=0;}
     apply();
   }
 
   window.openMapZoom=function(src){
+    img.classList.remove('ready');
     img.src=src;
-    reset();
+    const onReady=()=>{
+      const nw=img.naturalWidth||1, nh=img.naturalHeight||1;
+      fitScale=Math.min(1,(window.innerWidth*PAD)/nw,(window.innerHeight*PAD)/nh);
+      scale=fitScale;
+      centerAt(scale);
+      apply();
+      img.classList.add('ready');
+    };
+    if(img.complete && img.naturalWidth) onReady();
+    else img.onload=onReady;
     overlay.classList.add('show');
     hint.textContent=(i18n[lang]&&i18n[lang].zoomHint)||'';
     document.body.style.overflow='hidden';
@@ -2419,36 +2440,38 @@ addEventListener('resize',()=>{
   function closeZoom(){
     overlay.classList.remove('show');
     document.body.style.overflow='';
-    setTimeout(()=>{ if(!overlay.classList.contains('show')) img.src=''; },250);
+    setTimeout(()=>{ if(!overlay.classList.contains('show')){img.src='';img.classList.remove('ready');} },250);
   }
   document.getElementById('zoomClose').addEventListener('click',closeZoom);
-  overlay.addEventListener('click',e=>{ if(e.target===overlay||e.target===stage)closeZoom(); });
+  overlay.addEventListener('click',e=>{ if(e.target===overlay||e.target===document.getElementById('zoomStage'))closeZoom(); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&overlay.classList.contains('show'))closeZoom(); });
+  window.addEventListener('resize',()=>{ if(overlay.classList.contains('show')&&img.naturalWidth){
+    const nw=img.naturalWidth,nh=img.naturalHeight;
+    fitScale=Math.min(1,(window.innerWidth*PAD)/nw,(window.innerHeight*PAD)/nh);
+    if(scale<fitScale)scale=fitScale;
+    centerAt(scale);apply();
+  }});
 
   overlay.addEventListener('wheel',e=>{
     if(!overlay.classList.contains('show'))return;
     e.preventDefault();
-    const rect=img.getBoundingClientRect();
-    zoomAt(e.clientX-rect.left,e.clientY-rect.top,scale*(e.deltaY<0?1.18:1/1.18));
+    zoomAt(e.clientX,e.clientY,scale*(e.deltaY<0?1.2:1/1.2));
   },{passive:false});
 
   img.addEventListener('mousedown',e=>{
-    if(scale<=MIN)return;
-    e.preventDefault();dragging=true;moved=false;img.classList.add('dragging');
+    e.preventDefault();dragging=true;img.classList.add('dragging');
     startX=e.clientX;startY=e.clientY;startPosX=posX;startPosY=posY;
   });
   window.addEventListener('mousemove',e=>{
     if(!dragging)return;
-    moved=true;
     posX=startPosX+(e.clientX-startX);posY=startPosY+(e.clientY-startY);
     apply();
   });
   window.addEventListener('mouseup',()=>{dragging=false;img.classList.remove('dragging');});
 
   img.addEventListener('dblclick',e=>{
-    const rect=img.getBoundingClientRect();
-    if(scale>MIN)reset();
-    else zoomAt(e.clientX-rect.left,e.clientY-rect.top,DBL);
+    if(scale>fitScale*1.01)reset();
+    else zoomAt(e.clientX,e.clientY,fitScale*3.2);
   });
 
   function touchDist(t){ const dx=t[0].clientX-t[1].clientX,dy=t[0].clientY-t[1].clientY; return Math.hypot(dx,dy); }
@@ -2456,29 +2479,23 @@ addEventListener('resize',()=>{
     if(e.touches.length===2){
       pinchDist=touchDist(e.touches);pinchScale=scale;
     } else if(e.touches.length===1){
-      dragging=scale>MIN;moved=false;
+      dragging=true;
       startX=e.touches[0].clientX;startY=e.touches[0].clientY;startPosX=posX;startPosY=posY;
     }
   },{passive:true});
   overlay.addEventListener('touchmove',e=>{
     if(e.touches.length===2){
       e.preventDefault();
-      const rect=img.getBoundingClientRect();
-      const midX=(e.touches[0].clientX+e.touches[1].clientX)/2-rect.left;
-      const midY=(e.touches[0].clientY+e.touches[1].clientY)/2-rect.top;
+      const midX=(e.touches[0].clientX+e.touches[1].clientX)/2;
+      const midY=(e.touches[0].clientY+e.touches[1].clientY)/2;
       zoomAt(midX,midY,pinchScale*(touchDist(e.touches)/pinchDist));
     } else if(e.touches.length===1&&dragging){
-      e.preventDefault();moved=true;
+      e.preventDefault();
       posX=startPosX+(e.touches[0].clientX-startX);posY=startPosY+(e.touches[0].clientY-startY);
       apply();
     }
   },{passive:false});
-  overlay.addEventListener('touchend',e=>{
-    if(!moved&&scale<=MIN&&e.changedTouches&&e.changedTouches.length===1){
-      // одиночный тап без движения и без зума — ничего не делаем (не закрываем случайно)
-    }
-    dragging=false;
-  });
+  overlay.addEventListener('touchend',()=>{dragging=false;});
 })();
 
 applyLang();
