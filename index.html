@@ -115,9 +115,9 @@ const rules = [
 "en": "Insulting an on-duty official."
 },
 "p": {
-"ru": "Штраф 6000€",
-"uk": "Штраф 6000€",
-"en": "6000€ fine"
+"ru": "Штраф 3500€",
+"uk": "Штраф 3500€",
+"en": "3500€ fine"
 }
 },
 {
@@ -247,14 +247,70 @@ const rules = [
 "sub": "§2.6",
 "type": "fine",
 "t": {
-"ru": "Значительное превышение скорости (>200 км/ч).",
-"uk": "Надмірне перевищення швидкості (>200 км/год).",
-"en": "Excessive speeding (>200 km/h)."
+"ru": "Значительное превышение скорости (в городе 70км/ч, за городом до 120 км/ч).",
+"uk": "Значне перевищення швидкості (у місті 70км/год, поза містом до 120 км/год).",
+"en": "Significant speeding (70 km/h in the city, up to 120 km/h outside the city)."
 },
 "p": {
-"ru": "Штраф 4000€",
-"uk": "Штраф 4000€",
-"en": "4000€ fine"
+"ru": "Штраф 4000€ либо КПЗ 10 минут",
+"uk": "Штраф 4000€ або КПЗ 10 хвилин",
+"en": "4000€ fine or 10 minutes detention (KPZ)"
+}
+},
+{
+"sub": "§2.6.1",
+"type": "fine",
+"t": {
+"ru": "Превышение скорости (в городе 70км/ч, за городом до 120 км/ч), непропуск спецтранспорта/автобусов, создание помех при стоянке.",
+"uk": "Перевищення швидкості (у місті 70км/год, поза містом до 120 км/год), непропуск спецтранспорту/автобусів, створення перешкод при стоянці.",
+"en": "Speeding (70 km/h in the city, up to 120 km/h outside the city), failing to yield to emergency vehicles/buses, obstructing parking."
+},
+"p": {
+"ru": "Штраф 2500€",
+"uk": "Штраф 2500€",
+"en": "2500€ fine"
+}
+},
+{
+"sub": "§2.6.2",
+"type": "fine",
+"t": {
+"ru": "Нарушение ПДД, повлекшее ДТП.",
+"uk": "Порушення ПДР, що спричинило ДТП.",
+"en": "Traffic violation that caused an accident."
+},
+"p": {
+"ru": "Штраф 5000€ / КПЗ 10 минут",
+"uk": "Штраф 5000€ / КПЗ 10 хвилин",
+"en": "5000€ fine / 10 minutes detention (KPZ)"
+}
+},
+{
+"sub": "§2.6.3",
+"type": "severe",
+"t": {
+"ru": "Нарушение ПДД, повлекшее травмы средней тяжести.",
+"uk": "Порушення ПДР, що спричинило травми середньої тяжкості.",
+"en": "Traffic violation causing moderate injuries."
+},
+"p": {
+"ru": "Штраф 7000€ / КПЗ 20 минут",
+"uk": "Штраф 7000€ / КПЗ 20 хвилин",
+"en": "7000€ fine / 20 minutes detention (KPZ)"
+}
+},
+{
+"sub": "§2.6.4",
+"type": "severe",
+"t": {
+"ru": "Нарушение ПДД, повлекшее тяжкие травмы или смерть.",
+"uk": "Порушення ПДР, що спричинило тяжкі травми або смерть.",
+"en": "Traffic violation causing severe injuries or death."
+},
+"p": {
+"ru": "Штраф 8000€ / КПЗ 40 минут",
+"uk": "Штраф 8000€ / КПЗ 40 хвилин",
+"en": "8000€ fine / 40 minutes detention (KPZ)"
 }
 },
 {
@@ -420,9 +476,9 @@ const rules = [
 "en": "Using emergency lights without official need."
 },
 "p": {
-"ru": "Штраф 1700€",
-"uk": "Штраф 1700€",
-"en": "1700€ fine"
+"ru": "Штраф 5000€",
+"uk": "Штраф 5000€",
+"en": "5000€ fine"
 }
 },
 {
@@ -479,6 +535,34 @@ const rules = [
 "ru": "Депорт 1-3 суток",
 "uk": "Депорт 1-3 доби",
 "en": "Deport 1-3 days"
+}
+},
+{
+"sub": "§2.23",
+"type": "fine",
+"t": {
+"ru": "Непредоставление преимущества спецтранспорту (скорая, полиция, пожарники) с включенными маячками.",
+"uk": "Ненадання переваги спецтранспорту (швидка, поліція, пожежники) з увімкненими маячками.",
+"en": "Failing to yield to emergency vehicles (ambulance, police, fire) with lights on."
+},
+"p": {
+"ru": "Штраф 7000€ / КПЗ 15 минут",
+"uk": "Штраф 7000€ / КПЗ 15 хвилин",
+"en": "7000€ fine / 15 minutes detention (KPZ)"
+}
+},
+{
+"sub": "§2.24",
+"type": "fine",
+"t": {
+"ru": "Создание аварийной обстановки (принуждение других резко тормозить, маневрировать или уклоняться).",
+"uk": "Створення аварійної обстановки (примушування інших різко гальмувати, маневрувати чи ухилятися).",
+"en": "Creating a dangerous situation (forcing others to brake sharply, swerve, or evade)."
+},
+"p": {
+"ru": "Штраф 5000€ / КПЗ 10 минут",
+"uk": "Штраф 5000€ / КПЗ 10 хвилин",
+"en": "5000€ fine / 10 minutes detention (KPZ)"
 }
 }
 ]
@@ -661,9 +745,9 @@ const rules = [
 "en": "Using a weapon without a license."
 },
 "p": {
-"ru": "Штраф 3000€",
-"uk": "Штраф 3000€",
-"en": "3000€ fine"
+"ru": "Штраф 3000€ / 10 минут КПЗ",
+"uk": "Штраф 3000€ / 10 хвилин КПЗ",
+"en": "3000€ fine / 10 minutes detention (KPZ)"
 }
 },
 {
@@ -675,9 +759,9 @@ const rules = [
 "en": "Openly carrying a weapon."
 },
 "p": {
-"ru": "Штраф 5000€",
-"uk": "Штраф 5000€",
-"en": "5000€ fine"
+"ru": "Штраф 5000€ / 15 минут КПЗ",
+"uk": "Штраф 5000€ / 15 хвилин КПЗ",
+"en": "5000€ fine / 15 minutes detention (KPZ)"
 }
 },
 {
@@ -689,9 +773,9 @@ const rules = [
 "en": "Using a weapon in a crowded place without cause."
 },
 "p": {
-"ru": "Штраф 7000€",
-"uk": "Штраф 7000€",
-"en": "7000€ fine"
+"ru": "Штраф 7000€ / 15 минут КПЗ",
+"uk": "Штраф 7000€ / 15 хвилин КПЗ",
+"en": "7000€ fine / 15 minutes detention (KPZ)"
 }
 },
 {
@@ -703,9 +787,9 @@ const rules = [
 "en": "Transferring a weapon to a third party."
 },
 "p": {
-"ru": "Штраф 5000€",
-"uk": "Штраф 5000€",
-"en": "5000€ fine"
+"ru": "Штраф 5000€ / КПЗ 10 минут",
+"uk": "Штраф 5000€ / КПЗ 10 хвилин",
+"en": "5000€ fine / 10 minutes detention (KPZ)"
 }
 },
 {
@@ -717,9 +801,9 @@ const rules = [
 "en": "Attacking a government employee."
 },
 "p": {
-"ru": "КПЗ",
-"uk": "КПЗ",
-"en": "Detention (KPZ)"
+"ru": "КПЗ 30 минут",
+"uk": "КПЗ 30 хвилин",
+"en": "30 minutes detention (KPZ)"
 }
 },
 {
@@ -731,9 +815,9 @@ const rules = [
 "en": "Using a firearm to resist arrest."
 },
 "p": {
-"ru": "КПЗ",
-"uk": "КПЗ",
-"en": "Detention (KPZ)"
+"ru": "КПЗ 25 минут",
+"uk": "КПЗ 25 хвилин",
+"en": "25 minutes detention (KPZ)"
 }
 }
 ]
@@ -877,9 +961,9 @@ const rules = [
 "sub": "§6.10",
 "type": "severe",
 "t": {
-"ru": "Fail RP.",
-"uk": "Fail RP.",
-"en": "Fail RP."
+"ru": "Fail RP (Failure to RolePlay) - нереалистичное поведение, противоречащее логике и нормам реальной жизни.",
+"uk": "Fail RP (Failure to RolePlay) - нереалістична поведінка, що суперечить логіці та нормам реального життя.",
+"en": "Fail RP (Failure to RolePlay) — unrealistic behavior that contradicts logic and real-life norms."
 },
 "p": {
 "ru": "бан 3 дня",
@@ -916,26 +1000,12 @@ const rules = [
 }
 },
 {
-"sub": "§6.15",
-"type": "severe",
-"t": {
-"ru": "Bug Abuse.",
-"uk": "Bug Abuse.",
-"en": "Bug Abuse."
-},
-"p": {
-"ru": "бан от 1 до 7 дней",
-"uk": "бан від 1 до 7 днів",
-"en": "ban from 1 to 7 days"
-}
-},
-{
 "sub": "§6.16",
 "type": "severe",
 "t": {
-"ru": "ERP.",
-"uk": "ERP.",
-"en": "ERP."
+"ru": "ERP (Erotic RolePlay) - отыгровка действий сексуального или эротического характера.",
+"uk": "ERP (Erotic RolePlay) - відігравання дій сексуального чи еротичного характеру.",
+"en": "ERP (Erotic RolePlay) — roleplaying actions of a sexual or erotic nature."
 },
 "p": {
 "ru": "бан 7 дней",
@@ -947,9 +1017,9 @@ const rules = [
 "sub": "§6.17",
 "type": "severe",
 "t": {
-"ru": "NonRP Heal.",
-"uk": "NonRP Heal.",
-"en": "NonRP Heal."
+"ru": "NonRP Heal - лечение без RP-отыгровок или прямо во время боя.",
+"uk": "NonRP Heal - лікування без RP-відігравань або прямо під час бою.",
+"en": "NonRP Heal — healing without RP roleplay, or directly during combat."
 },
 "p": {
 "ru": "бан 2 дня",
@@ -961,9 +1031,9 @@ const rules = [
 "sub": "§6.18",
 "type": "severe",
 "t": {
-"ru": "NonRP Cop.",
-"uk": "NonRP Cop.",
-"en": "NonRP Cop."
+"ru": "NonRP Cop - действия сотрудника полиции, нарушающие логику RP или правила гос. структур.",
+"uk": "NonRP Cop - дії співробітника поліції, що порушують логіку RP чи правила гос. структур.",
+"en": "NonRP Cop — actions by a police officer that violate RP logic or government structure rules."
 },
 "p": {
 "ru": "бан 3 дня",
@@ -975,9 +1045,9 @@ const rules = [
 "sub": "§6.19",
 "type": "severe",
 "t": {
-"ru": "NonRP Drive.",
-"uk": "NonRP Drive.",
-"en": "NonRP Drive."
+"ru": "NonRP Drive - нереалистичное управление транспортным средством (на гиперкаре/суперкаре ехать по горам, езда на высокой скорости без колёс).",
+"uk": "NonRP Drive - нереалістичне керування транспортним засобом (на гіперкарі/суперкарі їхати горами, їзда на високій швидкості без коліс).",
+"en": "NonRP Drive — unrealistic vehicle handling (driving a hypercar/supercar over mountains, driving at high speed without wheels)."
 },
 "p": {
 "ru": "бан 2 дня",
@@ -989,9 +1059,9 @@ const rules = [
 "sub": "§6.20",
 "type": "severe",
 "t": {
-"ru": "Combat Medic.",
-"uk": "Combat Medic.",
-"en": "Combat Medic."
+"ru": "Combat Medic - оказание медпомощи или поднятие игрока во время активной перестрелки.",
+"uk": "Combat Medic - надання медичної допомоги або підняття гравця під час активної перестрілки.",
+"en": "Combat Medic — providing medical aid or reviving a player during an active firefight."
 },
 "p": {
 "ru": "бан 2 дня",
@@ -1003,9 +1073,9 @@ const rules = [
 "sub": "§6.21",
 "type": "severe",
 "t": {
-"ru": "DB.",
-"uk": "DB.",
-"en": "DB."
+"ru": "DB (DriveBy) - сбивать на машине человека.",
+"uk": "DB (DriveBy) - збивати людину машиною.",
+"en": "DB (DriveBy) — running someone over with a vehicle."
 },
 "p": {
 "ru": "бан 2 дня",
@@ -1017,9 +1087,9 @@ const rules = [
 "sub": "§6.22",
 "type": "severe",
 "t": {
-"ru": "BH.",
-"uk": "BH.",
-"en": "BH."
+"ru": "BH (BunnyHop) - прыжки во время движения для уклонения от пуль или выстрелов тайзера.",
+"uk": "BH (BunnyHop) - стрибки під час руху для ухилення від куль чи пострілів тайзера.",
+"en": "BH (BunnyHop) — jumping while moving to dodge bullets or taser shots."
 },
 "p": {
 "ru": "бан 3 дня",
@@ -1031,9 +1101,9 @@ const rules = [
 "sub": "§6.23",
 "type": "severe",
 "t": {
-"ru": "TK.",
-"uk": "TK.",
-"en": "TK."
+"ru": "TK (Team Kill) - нанесение урона или убийство участников своей фракции/команды.",
+"uk": "TK (Team Kill) - нанесення шкоди або вбивство учасників своєї фракції/команди.",
+"en": "TK (Team Kill) — damaging or killing members of your own faction/team."
 },
 "p": {
 "ru": "бан 2 дня",
@@ -1045,9 +1115,9 @@ const rules = [
 "sub": "§6.24",
 "type": "severe",
 "t": {
-"ru": "SK.",
-"uk": "SK.",
-"en": "SK."
+"ru": "SK (Spawn Kill) - убийство на месте появления персонажа.",
+"uk": "SK (Spawn Kill) - вбивство на місці появи персонажа.",
+"en": "SK (Spawn Kill) — killing at a character's spawn point."
 },
 "p": {
 "ru": "бан 2 дня",
@@ -1059,9 +1129,9 @@ const rules = [
 "sub": "§6.25",
 "type": "severe",
 "t": {
-"ru": "Bypass Ban.",
-"uk": "Bypass Ban.",
-"en": "Bypass Ban."
+"ru": "Bypass Ban — обход блокировки аккаунта любыми способами.",
+"uk": "Bypass Ban — обхід блокування акаунта будь-якими способами.",
+"en": "Bypass Ban — bypassing an account block by any means."
 },
 "p": {
 "ru": "Перманентный бан",
@@ -1073,9 +1143,23 @@ const rules = [
 "sub": "§6.26",
 "type": "severe",
 "t": {
-"ru": "Bodyblock.",
-"uk": "Bodyblock.",
-"en": "Bodyblock."
+"ru": "Bodyblock - намеренное блокирование движения игрока или транспорта своим персонажем.",
+"uk": "Bodyblock - навмисне блокування руху гравця чи транспорту своїм персонажем.",
+"en": "Bodyblock — intentionally blocking a player's or vehicle's movement with your character."
+},
+"p": {
+"ru": "бан 2 дня",
+"uk": "бан 2 дня",
+"en": "ban 2 days"
+}
+},
+{
+"sub": "§6.27",
+"type": "severe",
+"t": {
+"ru": "NonRP Cuff - надевание наручников на бегу/во время активного передвижения, засчитывается как PowerGaming.",
+"uk": "NonRP Cuff - надягання наручників на бігу/під час активного пересування, зараховується як PowerGaming.",
+"en": "NonRP Cuff — handcuffing someone while running/on the move counts as PowerGaming."
 },
 "p": {
 "ru": "бан 2 дня",
@@ -1176,20 +1260,6 @@ const rules = [
 }
 },
 {
-"sub": "§8.3",
-"type": "severe",
-"t": {
-"ru": "Фарм опыта без разрешения гражданина.",
-"uk": "Фарм XP без дозволу громадянина.",
-"en": "Farming XP without a civilian's permission."
-},
-"p": {
-"ru": "бан 2 дня",
-"uk": "бан 2 дня",
-"en": "ban 2 days"
-}
-},
-{
 "sub": "§8.4",
 "type": "severe",
 "t": {
@@ -1279,9 +1349,9 @@ const rules = [
 "en": "Pressuring a judge/officer/lawyer."
 },
 "p": {
-"ru": "Штраф 2500€",
-"uk": "Штраф 2500€",
-"en": "2500€ fine"
+"ru": "Штраф 3000€ / КПЗ 10 минут",
+"uk": "Штраф 3000€ / КПЗ 10 хвилин",
+"en": "3000€ fine / 10 minutes detention (KPZ)"
 }
 },
 {
@@ -1335,9 +1405,9 @@ const rules = [
 "en": "Inappropriate behavior in the courtroom."
 },
 "p": {
-"ru": "Штраф 1200€",
-"uk": "Штраф 1200€",
-"en": "1200€ fine"
+"ru": "Штраф 5000€ / КПЗ 15 минут",
+"uk": "Штраф 5000€ / КПЗ 15 хвилин",
+"en": "5000€ fine / 15 minutes detention (KPZ)"
 }
 },
 {
@@ -1349,23 +1419,9 @@ const rules = [
 "en": "Interrupting the judge/lawyer."
 },
 "p": {
-"ru": "Штраф 1200€",
-"uk": "Штраф 1200€",
-"en": "1200€ fine"
-}
-},
-{
-"sub": "§9.7",
-"type": "severe",
-"t": {
-"ru": "Нападение/драка в зале суда.",
-"uk": "Напад/бійка у залі суду.",
-"en": "Attack/fight in the courtroom."
-},
-"p": {
-"ru": "КПЗ",
-"uk": "КПЗ",
-"en": "Detention (KPZ)"
+"ru": "Штраф 6000€ / КПЗ 10 минут",
+"uk": "Штраф 6000€ / КПЗ 10 хвилин",
+"en": "6000€ fine / 10 minutes detention (KPZ)"
 }
 },
 {
@@ -1412,16 +1468,30 @@ const rules = [
 },
 {
 "sub": "§9.11",
-"type": "fine",
+"type": "severe",
 "t": {
-"ru": "Находиться на территории зала суда могут только адвокаты, судьи, офицеры и задержанные.",
-"uk": "Знаходитися на території залу суду можуть тільки адвокати, судді, офіцери та затримані.",
-"en": "Only lawyers, judges, officers, and detainees may be present in the courtroom."
+"ru": "Находиться на территории зала суда могут только адвокаты, судьи, офицеры, задержанные и свидетели.",
+"uk": "Знаходитися на території залу суду можуть тільки адвокати, судді, офіцери, затримані та свідки.",
+"en": "Only lawyers, judges, officers, detainees, and witnesses may be present in the courtroom."
 },
 "p": {
-"ru": "Штраф 3000€",
-"uk": "Штраф 3000€",
-"en": "3000€ fine"
+"ru": "КПЗ 10 минут",
+"uk": "КПЗ 10 хвилин",
+"en": "10 minutes detention (KPZ)"
+}
+},
+{
+"sub": "§9.12",
+"type": "severe",
+"t": {
+"ru": "Неявка судьи на судебное заседание. (В случае отсутствия или прибытия судьи с задержкой, судебный процесс отменяется, а конечное наказание для задержанного автоматически составляет 10 минут КПЗ.)",
+"uk": "Неявка судді на судове засідання. (У разі відсутності або прибуття судді із затримкою судовий процес скасовується, а кінцеве покарання для затриманого автоматично складає 10 хвилин КПЗ.)",
+"en": "A judge's failure to appear at a court hearing. (If the judge is absent or arrives late, the trial is cancelled and the detainee's final punishment automatically becomes 10 minutes detention (KPZ).)"
+},
+"p": {
+"ru": "КПЗ 10 минут",
+"uk": "КПЗ 10 хвилин",
+"en": "10 minutes detention (KPZ)"
 }
 }
 ]
@@ -1564,9 +1634,9 @@ const rules = [
 "en": "Illegally claiming someone else's territory."
 },
 "p": {
-"ru": "Штраф 4500€ → депорт до 2 суток",
-"uk": "Штраф 4500€ → депорт до 2 діб",
-"en": "4500€ fine → deport up to 2 days"
+"ru": "КПЗ 10 минут",
+"uk": "КПЗ 10 хвилин",
+"en": "10 minutes detention (KPZ)"
 }
 },
 {
@@ -1587,14 +1657,42 @@ const rules = [
 "sub": "§12.3",
 "type": "fine",
 "t": {
-"ru": "Препятствование действиям экстренных служб.",
-"uk": "Перешкоджання діям екстрених служб.",
-"en": "Obstructing emergency services."
+"ru": "Отказ покинуть территорию чужого дома по требованию владельца или полиции.",
+"uk": "Відмова покинути територію чужого будинку на вимогу власника чи поліції.",
+"en": "Refusing to leave someone else's property when ordered by the owner or police."
 },
 "p": {
-"ru": "Штраф 4500€",
-"uk": "Штраф 4500€",
-"en": "4500€ fine"
+"ru": "Штраф 5000€ / 15 минут КПЗ",
+"uk": "Штраф 5000€ / 15 хвилин КПЗ",
+"en": "5000€ fine / 15 minutes detention (KPZ)"
+}
+},
+{
+"sub": "§12.4",
+"type": "severe",
+"t": {
+"ru": "Ведение стрельбы с территории частного дома по прохожим или проезжающему транспорту.",
+"uk": "Ведення стрільби з території приватного будинку по перехожих чи транспорту, що проїжджає.",
+"en": "Shooting at passersby or passing vehicles from private property."
+},
+"p": {
+"ru": "КПЗ 25 минут",
+"uk": "КПЗ 25 хвилин",
+"en": "25 minutes detention (KPZ)"
+}
+},
+{
+"sub": "§12.5",
+"type": "fine",
+"t": {
+"ru": "Парковка личного или рабочего транспорта на частной территории дома без согласия владельца.",
+"uk": "Паркування особистого чи робочого транспорту на приватній території будинку без згоди власника.",
+"en": "Parking personal or work vehicles on private property without the owner's consent."
+},
+"p": {
+"ru": "Штраф 6000€",
+"uk": "Штраф 6000€",
+"en": "6000€ fine"
 }
 }
 ]
@@ -1846,9 +1944,9 @@ const rules = [
 "en": "Robbing a jewelry store."
 },
 "p": {
-"ru": "КПЗ",
-"uk": "КПЗ",
-"en": "Detention (KPZ)"
+"ru": "КПЗ 25 минут",
+"uk": "КПЗ 25 хвилин",
+"en": "25 minutes detention (KPZ)"
 }
 },
 {
@@ -1860,9 +1958,9 @@ const rules = [
 "en": "Robbing a safe."
 },
 "p": {
-"ru": "КПЗ",
-"uk": "КПЗ",
-"en": "Detention (KPZ)"
+"ru": "КПЗ 10 минут",
+"uk": "КПЗ 10 хвилин",
+"en": "10 minutes detention (KPZ)"
 }
 },
 {
@@ -1874,9 +1972,9 @@ const rules = [
 "en": "Robbing a container."
 },
 "p": {
-"ru": "КПЗ",
-"uk": "КПЗ",
-"en": "Detention (KPZ)"
+"ru": "КПЗ 30 минут",
+"uk": "КПЗ 30 хвилин",
+"en": "30 minutes detention (KPZ)"
 }
 },
 {
@@ -2148,6 +2246,129 @@ const rules = [
 "ru": "2 дня",
 "uk": "2 дня",
 "en": "2 days"
+}
+},
+{
+"sub": "19.6",
+"type": "severe",
+"t": {
+"ru": "Неоплата штрафа.",
+"uk": "Несплата штрафу.",
+"en": "Failure to pay a fine."
+},
+"p": {
+"ru": "10 минут КПЗ",
+"uk": "10 хвилин КПЗ",
+"en": "10 minutes detention (KPZ)"
+}
+}
+]
+},
+{
+"num": 20,
+"icon": "fa-key",
+"tt": {
+"ru": "Отмычки",
+"uk": "Відмички",
+"en": "Lockpicks"
+},
+"items": [
+{
+"sub": "§20.1",
+"type": "severe",
+"t": {
+"ru": "Использование отмычек для снятия наручников с другого задержанного игрока.",
+"uk": "Використання відмичок для зняття наручників з іншого затриманого гравця.",
+"en": "Using lockpicks to remove handcuffs from another detained player."
+},
+"p": {
+"ru": "2 дня бана",
+"uk": "2 дні бану",
+"en": "ban 2 days"
+}
+},
+{
+"sub": "§20.2",
+"type": "severe",
+"t": {
+"ru": "Снятие наручников отмычками с другого игрока во время активной перестрелки или погони.",
+"uk": "Зняття наручників відмичками з іншого гравця під час активної перестрілки чи погоні.",
+"en": "Removing handcuffs with lockpicks from another player during an active firefight or chase."
+},
+"p": {
+"ru": "4 дня бана",
+"uk": "4 дні бану",
+"en": "ban 4 days"
+}
+},
+{
+"sub": "§20.3",
+"type": "severe",
+"t": {
+"ru": "Снятие наручников отмычкой с задержанного прямо в здании ПД, зале суда или КПЗ.",
+"uk": "Зняття наручників відмичкою із затриманого прямо в будівлі ПД, залі суду чи КПЗ.",
+"en": "Removing handcuffs with a lockpick from a detainee directly inside the PD building, courtroom, or detention (KPZ)."
+},
+"p": {
+"ru": "7 дней бана",
+"uk": "7 днів бану",
+"en": "ban 7 days"
+}
+},
+{
+"sub": "§20.4",
+"type": "severe",
+"t": {
+"ru": "Попытка снятия наручников с игрока отмычкой, находящегося внутри служебного автомобиля полиции.",
+"uk": "Спроба зняття наручників з гравця відмичкою, який перебуває всередині службового автомобіля поліції.",
+"en": "Attempting to remove handcuffs with a lockpick from a player inside a police service vehicle."
+},
+"p": {
+"ru": "2 дня бана",
+"uk": "2 дні бану",
+"en": "ban 2 days"
+}
+},
+{
+"sub": "§20.5",
+"type": "severe",
+"t": {
+"ru": "Снятие наручников отмычкой с игрока во время проведения процессуальных действий (обыск, допрос).",
+"uk": "Зняття наручників відмичкою з гравця під час проведення процесуальних дій (обшук, допит).",
+"en": "Removing handcuffs with a lockpick from a player during procedural actions (search, interrogation)."
+},
+"p": {
+"ru": "3 дня бана",
+"uk": "3 дні бану",
+"en": "ban 3 days"
+}
+},
+{
+"sub": "§20.6",
+"type": "severe",
+"t": {
+"ru": "Снятие наручников отмычкой без отыгровки передачи предмета или процесса взлома.",
+"uk": "Зняття наручників відмичкою без відігравання передачі предмета чи процесу зламування.",
+"en": "Removing handcuffs with a lockpick without roleplaying the item handoff or the picking process."
+},
+"p": {
+"ru": "5 дней бана",
+"uk": "5 днів бану",
+"en": "ban 5 days"
+}
+},
+{
+"sub": "§20.7",
+"type": "severe",
+"t": {
+"ru": "Снятие наручников с игрока на территории Зеленой Зоны (ЗЗ).",
+"uk": "Зняття наручників з гравця на території Зеленої Зони (ЗЗ).",
+"en": "Removing handcuffs from a player within the Green Zone (GZ)."
+},
+"p": {
+"ru": "7 дней бана",
+"uk": "7 днів бану",
+"en": "ban 7 days"
 }
 }
 ]
